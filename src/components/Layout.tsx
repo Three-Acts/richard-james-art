@@ -30,7 +30,12 @@ export default function Layout() {
     <>
       <Preloader />
       <Nav transparent={isHome} />
-      <main id="main">
+      {/* `isolate` keeps the page's own stacking context (the home stage stacks
+          its heroes / vignette / title plate as high as z-130) contained, so it
+          can never paint over the fixed Nav (z-70), Menu (z-80) or Preloader
+          (z-100). Without it those internal z-indices escape to the root and the
+          art covers the open menu / hides the intro. */}
+      <main id="main" className="isolate">
         <Outlet />
       </main>
       {!isHome && <Footer />}

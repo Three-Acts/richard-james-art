@@ -83,8 +83,10 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
             {site.name}
           </Link>
 
-          {/* Desktop links + menu trigger */}
-          <div className="hidden items-center gap-8 md:flex">
+          {/* Desktop links. The full-screen Menu overlay would just repeat these
+              same items, so on desktop we show the inline list only — the
+              overlay is reserved for the mobile hamburger below. */}
+          <div className="hidden items-center md:flex">
             <ul className="flex items-center gap-7">
               {nav.map((item) => {
                 const active =
@@ -106,22 +108,6 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
                 )
               })}
             </ul>
-
-            <span aria-hidden="true" className="h-4 w-px bg-line" />
-
-            <button
-              type="button"
-              onClick={() => setMenuOpen(true)}
-              aria-haspopup="dialog"
-              aria-expanded={menuOpen}
-              className="group flex items-center gap-3 text-bone transition-colors duration-500 hover:text-gold-bright focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-gold"
-            >
-              <span className="u-eyebrow text-current">Menu</span>
-              <span aria-hidden="true" className="flex flex-col gap-[5px]">
-                <span className="block h-px w-5 bg-current" />
-                <span className="block h-px w-5 bg-current" />
-              </span>
-            </button>
           </div>
 
           {/* Mobile hamburger */}
@@ -141,7 +127,11 @@ export default function Nav({ transparent = false }: { transparent?: boolean }) 
         </nav>
       </header>
 
-      <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      {/* Mobile-only: the overlay is hidden outright at md+ so it can never
+          appear on desktop (e.g. if a phone-width window is widened). */}
+      <div className="md:hidden">
+        <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      </div>
     </>
   )
 }

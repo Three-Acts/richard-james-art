@@ -70,19 +70,39 @@ export default function Preloader() {
       }
     }
 
-    // Animate the counter / progress line over ~1.7s with an eased curve.
+    // Content-aware intro. The progress line eases over a guaranteed
+    // MIN_DURATION so the animation always plays in full (even when the page
+    // is already cached and loads instantly), but it holds just shy of 100
+    // until the page has actually finished loading. It completes only once
+    // BOTH are true. A MAX_DURATION cap guarantees it never hangs if `load`
+    // is slow or never fires.
+    const MIN_DURATION = 1800
+    const MAX_DURATION = 7000
+
+    let loaded = document.readyState === 'complete'
+    const onLoad = () => {
+      loaded = true
+    }
+    if (!loaded) window.addEventListener('load', onLoad, { once: true })
+
     const start = performance.now()
-    const DURATION = 1700
 
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / DURATION)
+      const elapsed = now - start
+      const t = Math.min(1, elapsed / MIN_DURATION)
       // ease-out-expo
       const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t)
-      setProgress(Math.round(eased * 100))
-      if (t < 1) {
-        rafRef.current = window.requestAnimationFrame(tick)
-      } else {
+      // Creep up but never reach 100 until the content is in — that final
+      // jump to 100 is what signals "ready", so it has to mean something.
+      const target = loaded ? eased : Math.min(eased, 0.9)
+      setProgress(Math.round(target * 100))
+
+      const ready = loaded && elapsed >= MIN_DURATION
+      if (ready || elapsed >= MAX_DURATION) {
+        setProgress(100)
         window.setTimeout(finish, 320)
+      } else {
+        rafRef.current = window.requestAnimationFrame(tick)
       }
     }
     rafRef.current = window.requestAnimationFrame(tick)
@@ -90,6 +110,7 @@ export default function Preloader() {
     return () => {
       window.clearTimeout(enterTimer)
       if (rafRef.current) window.cancelAnimationFrame(rafRef.current)
+      window.removeEventListener('load', onLoad)
       document.body.style.overflow = prevOverflow
       getLenis()?.start()
     }

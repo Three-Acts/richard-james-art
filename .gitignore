@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+.vercel
+*.local
+.DS_Store
+.env*
+.playwright-mcp
+
+# Recon source-of-truth (kept locally, not shipped)
+_recon
+rj-*.png

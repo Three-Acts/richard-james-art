@@ -6,8 +6,9 @@
   "description": "Richard James — South African Artist, Sculptor & Counsellor. Cinematic portfolio (React + Vite + vite-react-ssg).",
   "scripts": {
     "dev": "vite-react-ssg dev --host",
-    "build": "vite-react-ssg build && node scripts/gen-sitemap.mjs",
+    "build": "node scripts/prepare-images.mjs && vite-react-ssg build && node scripts/gen-sitemap.mjs",
     "preview": "vite preview",
+    "test:gestures": "node scripts/test-gesture-carousel.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -16,15 +16,16 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    // Build-time image compression. AVIF is already efficient; this guarantees
-    // consistent encoding and trims any oversized source files.
+    // Build-time compression for any imported/bundled assets. The project
+    // artwork in public/images is handled beforehand by scripts/prepare-images.mjs
+    // (resize ≤ 1920px + convert to AVIF), so we leave public/ alone here to
+    // avoid re-encoding those already-optimised AVIFs a second time.
     ViteImageOptimizer({
       avif: { quality: 72 },
       webp: { quality: 80 },
       jpg: { quality: 80 },
       png: { quality: 80 },
-      // Only touch project artwork, never icons/logos.
-      includePublic: true,
+      includePublic: false,
       logStats: true,
     }),
   ],

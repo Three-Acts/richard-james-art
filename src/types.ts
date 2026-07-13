@@ -1,3 +1,24 @@
+/**
+ * A single gallery image with an optional short write-up. The write-up shows
+ * as a caption beneath the image in the grid; it is NOT shown in the fullscreen
+ * viewer (there we just show the artwork).
+ */
+export interface GalleryImage {
+  /** Image path under public/, e.g. "/images/<slug>/02.avif" */
+  src: string
+  /** Optional short write-up / caption for this image. */
+  caption?: string
+}
+
+/**
+ * A gallery entry is either a bare image path (no write-up) or a
+ * `{ src, caption }` object. The bare-string form keeps data terse for the many
+ * images that don't need a caption; use the object form to attach one. Run every
+ * entry through `galleryImages()` (see data/projects.ts) to normalise to
+ * `GalleryImage[]` before rendering.
+ */
+export type GalleryEntry = string | GalleryImage
+
 export interface Project {
   /** URL slug, e.g. "ghosts-become-ancestors" */
   slug: string
@@ -15,8 +36,11 @@ export interface Project {
   hero: string
   /** Thumbnail image path (public/) */
   thumb: string
-  /** All gallery image paths in order */
-  images: string[]
+  /**
+   * All gallery images in order. Each entry is a bare path or a
+   * `{ src, caption }` object — normalise with `galleryImages(project)`.
+   */
+  images: GalleryEntry[]
   /** Slug of the next project (wraps around) */
   next: string
 }

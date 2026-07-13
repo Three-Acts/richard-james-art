@@ -155,14 +155,14 @@ function MobileHome({
           </span>
           <span aria-hidden="true" className="h-px w-8 bg-line" />
         </div>
-        <h1 className="overflow-hidden">
+        <h2 className="overflow-hidden">
           <Link
             to={`/projects/${active.slug}`}
             className="u-display link-underline inline-block text-[clamp(1.6rem,7vw,2.4rem)] leading-[1.04] text-bone"
           >
             {active.title}
           </Link>
-        </h1>
+        </h2>
         <div className="mt-5">
           <Link to={`/projects/${active.slug}`} className="btn-line">
             View Details

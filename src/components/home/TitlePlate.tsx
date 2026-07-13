@@ -85,7 +85,7 @@ export default function TitlePlate({
           </div>
 
           {/* clip wrapper keeps the masked swap tidy */}
-          <h1 className="overflow-hidden">
+          <h2 className="overflow-hidden">
             <Link
               ref={titleRef}
               to={`/projects/${project.slug}`}
@@ -93,7 +93,7 @@ export default function TitlePlate({
             >
               {project.title}
             </Link>
-          </h1>
+          </h2>
         </div>
 
         {/* CTA — bottom right on desktop, below on mobile */}

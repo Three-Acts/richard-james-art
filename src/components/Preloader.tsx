@@ -145,7 +145,7 @@ export default function Preloader() {
           {site.location}
         </span>
 
-        <h1
+        <div
           className="u-display text-bone text-[clamp(2rem,7vw,4.5rem)] leading-none"
           style={{
             opacity: enter ? 1 : 0,
@@ -155,7 +155,7 @@ export default function Preloader() {
           }}
         >
           {site.name}
-        </h1>
+        </div>
 
         {/* Progress line + counter */}
         <div className="mt-2 flex w-[min(18rem,60vw)] flex-col items-center gap-3">

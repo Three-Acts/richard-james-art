@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Seo, personJsonLd } from '@/lib/seo'
 import { projects } from '@/data/projects'
 import { site } from '@/data/site'
+import { websiteJsonLd } from '@/lib/structuredData'
 import HomeExperience from '@/components/home/HomeExperience'
 
 /**
@@ -23,7 +24,7 @@ export function Component() {
         description={site.description}
         image={first.hero}
         type="website"
-        jsonLd={personJsonLd()}
+        jsonLd={[websiteJsonLd(), personJsonLd()]}
       />
 
       {/* Visually-hidden, crawlable index of the whole portfolio. Present in

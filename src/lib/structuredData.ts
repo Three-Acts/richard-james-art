@@ -19,9 +19,7 @@ function abs(path: string): string {
 }
 
 /**
- * Site-level WebSite node. Identifies the canonical origin, publisher and an
- * (optional) on-site SearchAction so engines can surface a sitelinks searchbox
- * if a /search route is ever added.
+ * Site-level WebSite node. Identifies the canonical origin and publisher.
  */
 export function websiteJsonLd(): JsonLd {
   return {
@@ -30,20 +28,14 @@ export function websiteJsonLd(): JsonLd {
     name: site.name,
     alternateName: site.tagline,
     url: site.url,
+    logo: `${site.url}/favicon.svg`,
+    sameAs: ['https://richard-james-art.vercel.app/'],
     description: site.description,
     inLanguage: 'en',
     publisher: {
       '@type': 'Person',
       name: site.name,
       url: site.url,
-    },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${site.url}/projects?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
     },
   }
 }

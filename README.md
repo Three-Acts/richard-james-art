@@ -1,6 +1,6 @@
 # Richard James — Portfolio
 
-A cinematic recreation + enhancement of [richardjamesart.com](https://www.richardjamesart.com/) for the South African artist, sculptor and counsellor Richard James. Statically generated, SEO-complete, and deployed on Vercel.
+A cinematic recreation + enhancement of [richardjamesart.com](https://www.richardjamesart.com/) for the South African artist and sculptor Richard James. Statically generated, SEO-complete, and deployed on Vercel.
 
 ## Highlights
 

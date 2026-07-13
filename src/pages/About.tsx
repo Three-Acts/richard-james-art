@@ -25,8 +25,8 @@ export function Component() {
             Richard James
           </h1>
           <p className="mt-6 max-w-prose text-[0.98rem] leading-relaxed text-bone-dim">
-            South African artist, sculptor and counsellor working between Port
-            Elizabeth and Cape Town.
+            South African artist and sculptor working between Port Elizabeth
+            and Cape Town.
           </p>
         </Reveal>
 
@@ -87,9 +87,9 @@ export function Component() {
 
         {/* Contact CTA */}
         <Reveal className="mt-28 border-t border-line-soft pt-16 text-center">
-          <p className="u-eyebrow text-muted">Enquiries &amp; Commissions</p>
+          <p className="u-eyebrow text-muted">Contact</p>
           <p className="mx-auto mt-6 max-w-xl font-display text-[clamp(1.4rem,4vw,2.25rem)] leading-tight text-bone [text-wrap:balance]">
-            To sit with the work, in conversation.
+            Get in touch with Richard.
           </p>
           <Link to="/contact" className="btn-line mt-10">
             Get in touch

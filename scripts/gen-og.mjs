@@ -35,7 +35,7 @@ const OUTPUT = resolve(ROOT, 'public/og-default.jpg')
 
 // Brand strings (kept literal so the script has no app-import / TS dependency).
 const NAME = 'RICHARD JAMES'
-const TAGLINE = 'Artist · Sculptor · Counsellor'
+const TAGLINE = 'Artist · Sculptor'
 
 async function firstExisting(candidates) {
   for (const rel of candidates) {

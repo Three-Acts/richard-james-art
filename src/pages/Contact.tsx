@@ -31,10 +31,11 @@ function CopyButton({ value, label }: { value: string; label: string }) {
     <button
       type="button"
       onClick={onCopy}
-      aria-label={`Copy ${label}`}
       className="u-eyebrow inline-flex items-center gap-2 rounded-full border border-line-soft px-3 py-1.5 text-[0.62rem] text-muted transition-colors duration-500 ease-out-expo hover:border-gold/50 hover:text-gold-bright focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold/60"
     >
-      <span aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
+      <span aria-live="polite">
+        {copied ? `${label} copied` : `Copy ${label}`}
+      </span>
     </button>
   )
 }
@@ -73,8 +74,7 @@ export function Component() {
             Contact
           </h1>
           <p className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed text-bone-dim [text-wrap:balance]">
-            For enquiries, commissions, or to arrange a viewing of the work — by
-            email or phone.
+            Contact Richard directly by email or phone.
           </p>
         </Reveal>
 

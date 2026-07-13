@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import { projects, years } from '@/data/projects'
-import { useHomeScroll } from './useHomeScroll'
+import { useGestureCarousel } from '@/lib/useGestureCarousel'
 import CenterStage from './CenterStage'
 import VerticalTrack, { MobileTrack } from './VerticalTrack'
 import TitlePlate from './TitlePlate'
@@ -14,7 +14,7 @@ import YearFilter from './YearFilter'
  * Desktop (md+): a fixed full-viewport cinematic stage that SNAPS between works.
  * A wheel flick, a vertical drag (anywhere — stage or rail), or the arrow keys
  * move a continuous position that commits to the next/previous work past a
- * threshold, else eases back (see useHomeScroll). The cross-fade and rail
+ * threshold, else eases back (see useGestureCarousel). The cross-fade and rail
  * translate are driven imperatively from that position; the rounded active
  * index updates title / year / aria.
  *
@@ -28,7 +28,7 @@ import YearFilter from './YearFilter'
  */
 export default function HomeExperience() {
   const N = projects.length
-  const api = useHomeScroll(N)
+  const api = useGestureCarousel(N)
   const { activeIndex, stageRef } = api
   const active = projects[activeIndex] ?? projects[0]
 
@@ -44,6 +44,8 @@ export default function HomeExperience() {
       <div className="hidden md:block">
         <div
           ref={stageRef}
+          data-lenis-prevent
+          data-gesture-carousel
           className="relative h-[100svh] w-full cursor-grab touch-none select-none overflow-hidden active:cursor-grabbing"
           style={{ paddingTop: 'var(--nav-h)' }}
           role="group"
@@ -84,18 +86,23 @@ export default function HomeExperience() {
 
 /* --------------------------------------------------------------------- */
 
-function ScrollHint({ progressApi }: { progressApi: ReturnType<typeof useHomeScroll> }) {
+function ScrollHint({
+  progressApi,
+}: {
+  progressApi: ReturnType<typeof useGestureCarousel>
+}) {
   const ref = useRef<HTMLDivElement>(null)
+  const { reducedMotion, registerFrame } = progressApi
   useEffect(() => {
-    if (progressApi.reducedMotion) return
-    const unsub = progressApi.registerFrame((p) => {
+    if (reducedMotion) return
+    const unsub = registerFrame((p) => {
       const el = ref.current
       if (!el) return
       // visible only at the very start
       el.style.opacity = String(Math.max(0, 1 - p * 14))
     })
     return unsub
-  }, [progressApi])
+  }, [reducedMotion, registerFrame])
   return (
     <div
       ref={ref}

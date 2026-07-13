@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Image from '@/components/ui/Image'
 import type { Project } from '@/types'
-import type { HomeScrollApi } from './useHomeScroll'
+import type { GestureCarouselApi } from '@/lib/useGestureCarousel'
 
 /**
  * The thumbnail rail.
@@ -26,9 +26,9 @@ export default function VerticalTrack({
 }: {
   projects: Project[]
   activeIndex: number
-  api: HomeScrollApi
+  api: GestureCarouselApi
 }) {
-  const { goToIndex, reducedMotion } = api
+  const { goToIndex, reducedMotion, registerFrame } = api
   const listRef = useRef<HTMLUListElement>(null)
   const itemRefs = useRef<HTMLLIElement[]>([])
   const setItem = (i: number) => (el: HTMLLIElement | null) => {
@@ -61,9 +61,9 @@ export default function VerticalTrack({
       }
     }
 
-    const unsub = api.registerFrame((progress) => apply(progress))
+    const unsub = registerFrame((progress) => apply(progress))
     return unsub
-  }, [api, projects.length, reducedMotion])
+  }, [projects.length, reducedMotion, registerFrame])
 
   return (
     <nav
@@ -196,6 +196,7 @@ export function MobileTrack({
   return (
     <ul
       ref={scrollerRef}
+      data-lenis-prevent-horizontal
       className="no-scrollbar flex snap-x snap-mandatory items-center gap-3 overflow-x-auto px-[42%] py-1"
       aria-label="Project thumbnails"
     >

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import type { Project } from '@/types'
-import type { HomeScrollApi } from './useHomeScroll'
+import type { GestureCarouselApi } from '@/lib/useGestureCarousel'
 
 /**
  * The fixed centre stage: every project's hero stacked absolutely, only the
@@ -21,7 +21,7 @@ export default function CenterStage({
 }: {
   projects: Project[]
   activeIndex: number
-  api: HomeScrollApi
+  api: GestureCarouselApi
 }) {
   const { registerFrame, reducedMotion } = api
   // Per-slide refs for the fade layer and the inner transform layer.
@@ -45,7 +45,7 @@ export default function CenterStage({
     // Crossfade window: how far (in index units) a neighbour bleeds in.
     const FADE = 0.62
 
-    const unsub = api.registerFrame((progress) => {
+    const unsub = registerFrame((progress) => {
       const pos = progress * lastN // fractional index, 0..N-1
       for (let i = 0; i < N; i++) {
         const layer = layerRefs.current[i]
@@ -70,7 +70,7 @@ export default function CenterStage({
       }
     })
     return unsub
-  }, [api, projects.length, reducedMotion, registerFrame])
+  }, [projects.length, reducedMotion, registerFrame])
 
   // Reduced motion: scrolling still changes the work, but as a plain opacity
   // cut keyed off the (rounded) active index — no parallax, no scale drift.
@@ -103,6 +103,7 @@ export default function CenterStage({
               to={`/projects/${p.slug}`}
               aria-label={`View ${p.title}`}
               tabIndex={i === activeIndex ? 0 : -1}
+              draggable={false}
               className="group u-fill flex items-center justify-center outline-none"
               style={{
                 // SSR/no-JS start state: only the first slide is visible.

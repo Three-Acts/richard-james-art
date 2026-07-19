@@ -118,14 +118,18 @@ const SPREAD = 52 // vw between neighbouring images
 const SIDE_SHRINK = 0.58 // neighbours render at (1 - this) scale ≈ 0.42
 
 // Looser, flick-friendly feel for the viewer than the home stage: a flick lands
-// immediately and a small scroll commits instead of easing back.
+// immediately and a small scroll commits instead of easing back. The gesture
+// axis matches the layout — horizontal drags/swipes move the images (a mouse's
+// vertical-only wheel still works; the adapter adopts whichever axis carries
+// the gesture).
 const VIEWER_FEEL = {
+  axis: 'x',
   wheelSpan: 110,
   dragSpan: 72,
   flickVelocity: 1.1,
   commitThreshold: 0.22,
   snapDuration: 0.58,
-}
+} as const
 
 /** The multi-image horizontal coverflow (only used when there are ≥ 2 images). */
 function Coverflow({

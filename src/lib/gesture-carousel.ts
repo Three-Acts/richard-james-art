@@ -7,6 +7,9 @@
  */
 
 export interface GestureCarouselOptions {
+  /** Gesture axis read by the DOM adapter: 'y' scroll/drag or 'x' (e.g. the
+   *  horizontal lightbox coverflow). The engine itself is axis-agnostic. */
+  axis: 'x' | 'y'
   /** Pixels of wheel movement that preview one complete slide. */
   wheelSpan: number
   /** Pixels of pointer movement that preview one complete slide. */
@@ -17,8 +20,13 @@ export interface GestureCarouselOptions {
   commitThreshold: number
   /** Pointer movement required before a press becomes a drag. */
   dragMinimum: number
-  /** Quiet time used by the DOM adapter to finish a wheel impulse. */
+  /** Quiet time used by the DOM adapter to COMMIT a wheel impulse that has
+   *  passed the threshold. */
   wheelSettleMs: number
+  /** Quiet time before a below-threshold impulse eases back. Deliberately much
+   *  longer than wheelSettleMs: trackpad users pause mid-gesture, and an eager
+   *  snap-back starts fighting the fingers that are about to continue. */
+  wheelReturnMs: number
   /** Duration of the GSAP settle tween. */
   snapDuration: number
   /** GSAP easing used by the settle tween. */
@@ -26,12 +34,14 @@ export interface GestureCarouselOptions {
 }
 
 export const DEFAULT_GESTURE_CAROUSEL_OPTIONS: GestureCarouselOptions = {
+  axis: 'y',
   wheelSpan: 130,
   dragSpan: 88,
   flickVelocity: 2.4,
   commitThreshold: 0.5,
   dragMinimum: 6,
   wheelSettleMs: 110,
+  wheelReturnMs: 300,
   snapDuration: 0.68,
   snapEase: 'power3.out',
 }
@@ -59,7 +69,10 @@ export interface DragEnd {
 }
 
 const WHEEL_RESTART_RATIO = 1.2
-const WHEEL_RESTART_MIN_DELTA = 4
+// A genuine second swipe ramps back up past this; the dribble of tiny deltas
+// at the very end of a momentum tail must never read as a fresh gesture (each
+// false restart nudged the position and made trackpads feel loose and jittery).
+const WHEEL_RESTART_MIN_DELTA = 16
 const WHEEL_RESTART_GAP_MS = 48
 
 const clamp = (value: number, min: number, max: number) =>

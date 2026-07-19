@@ -45,8 +45,39 @@ export default function CenterStage({
     // Crossfade window: how far (in index units) a neighbour bleeds in.
     const FADE = 0.62
 
-    const unsub = registerFrame((progress) => {
+    const unsub = registerFrame((progress, _activeIndex, jump) => {
       const pos = progress * lastN // fractional index, 0..N-1
+
+      // Programmatic long move (year filter, distant thumbnail, Home/End):
+      // the rail glides the whole way, but the stage reads it as ONE step —
+      // the outgoing and incoming heroes crossfade directly, using the same
+      // falloff/parallax curves as a real one-step scroll, and nothing in
+      // between flashes by.
+      if (jump && jump.to !== jump.from) {
+        const dir = Math.sign(jump.to - jump.from)
+        const t = Math.min(1, Math.max(0, (pos - jump.from) / (jump.to - jump.from)))
+        for (let i = 0; i < N; i++) {
+          const layer = layerRefs.current[i]
+          const inner = innerRefs.current[i]
+          if (!layer) continue
+          // Virtual one-step signed distance: outgoing walks 0 → 1 away,
+          // incoming approaches 1 → 0 from the direction of travel.
+          const s = i === jump.from ? -t * dir : i === jump.to ? (1 - t) * dir : null
+          const d = s === null ? Infinity : Math.abs(s)
+          const o = d >= FADE ? 0 : Math.pow(1 - d / FADE, 1.6)
+          layer.style.opacity = o.toFixed(4)
+          layer.style.pointerEvents = o > 0.5 ? 'auto' : 'none'
+          layer.style.zIndex = String(Math.round(o * 100))
+          if (inner) {
+            const scale = 1.06 - 0.06 * o
+            const ty = (s ?? 0) * 26
+            inner.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`
+            inner.style.filter = `brightness(${(0.55 + 0.45 * o).toFixed(3)})`
+          }
+        }
+        return
+      }
+
       for (let i = 0; i < N; i++) {
         const layer = layerRefs.current[i]
         const inner = innerRefs.current[i]

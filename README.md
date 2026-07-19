@@ -6,7 +6,7 @@ A cinematic recreation + enhancement of [richardjamesart.com](https://www.richar
 
 - **Cinematic home** — a once-per-session preloader, then a scroll-synced stage: the centred artwork cross-fades in lockstep with a far-right vertical thumbnail **track**, a bottom **title plate** (Cinzel), and a left **year filter** (2022–2025). Wheel, drag, keyboard (↑/↓, Home/End) and thumbnail/year clicks all drive the same active index. Collapses to a full-width hero + horizontal swipe strip on mobile.
 - **Project pages** — full-bleed parallax hero, "slide text", and a free-form masonry **gallery** (2 columns desktop / 1 column mobile, natural aspect ratios) with staggered scroll reveals.
-- **Content** — Projects index (year-filtered grid), the full essay *The Unborn Rags of the Mind*, About, and Contact (copy-to-clipboard).
+- **Content** — a Slideshow/Grid toggle on the home page (the grid is the year-filtered works index), the full essay *The Unborn Rags of the Mind*, About, and Contact (copy-to-clipboard).
 - **Static + SEO** — every route is pre-rendered to its own HTML file with unique `<title>`, meta, Open Graph/Twitter, canonical and JSON-LD (`VisualArtwork`, `Person`). `sitemap.xml`, `robots.txt` and an OG image are generated at build.
 
 ## Stack

@@ -32,7 +32,7 @@ const today = new Date().toISOString().slice(0, 10)
 const body = urls
   .map((u) => {
     const priority = u === '/' ? '1.0' : u.startsWith('/projects/') ? '0.8' : '0.6'
-    const changefreq = u === '/' || u === '/projects' ? 'weekly' : 'monthly'
+    const changefreq = u === '/' ? 'weekly' : 'monthly'
     return `  <url>\n    <loc>${ORIGIN}${u}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
   })
   .join('\n')

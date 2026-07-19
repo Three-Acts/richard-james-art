@@ -90,7 +90,8 @@ export function imageGalleryJsonLd(p: {
 }
 
 /**
- * CollectionPage for the /projects index. Lists every project as a
+ * CollectionPage for the home page, which hosts the full works grid (the
+ * standalone /projects index was folded into it). Lists every project as a
  * VisualArtwork so the full body of work is discoverable from one node.
  */
 export function collectionJsonLd(): JsonLd {
@@ -98,7 +99,7 @@ export function collectionJsonLd(): JsonLd {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: `${site.name} — Works`,
-    url: abs('/projects'),
+    url: abs('/'),
     description: site.description,
     isPartOf: { '@type': 'WebSite', name: site.name, url: site.url },
     author: { '@type': 'Person', name: site.name, url: site.url },

@@ -6,7 +6,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/projetcs", "destination": "/projects", "permanent": true }
+    { "source": "/projetcs", "destination": "/", "permanent": true },
+    { "source": "/projects", "destination": "/", "permanent": true }
   ],
   "headers": [
     {

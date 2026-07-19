@@ -30,8 +30,8 @@ export function Component() {
             That project could not be located.
           </p>
           <div className="mt-2 flex justify-center">
-            <Link to="/projects" className="btn-line">
-              View all projects
+            <Link to="/" className="btn-line">
+              View all works
             </Link>
           </div>
         </section>

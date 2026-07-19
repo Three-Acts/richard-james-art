@@ -13,7 +13,6 @@ export const routes: RouteRecord[] = [
     element: <Layout />,
     children: [
       { index: true, lazy: () => import('./pages/Home') },
-      { path: 'projects', lazy: () => import('./pages/ProjectsIndex') },
       {
         path: 'projects/:slug',
         lazy: () => import('./pages/ProjectDetail'),

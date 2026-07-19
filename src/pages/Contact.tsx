@@ -40,67 +40,79 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   )
 }
 
-function ContactLine({
+/** One line of the contact index: eyebrow label / large value / copy. */
+function ContactRow({
+  label,
   href,
   value,
-  label,
+  copyLabel,
 }: {
+  label: string
   href: string
   value: string
-  label: string
+  copyLabel: string
 }) {
+  // Label + copy affordance share the top line; the value gets the full row
+  // width beneath (Cinzel runs wide — the email address needs all of it).
   return (
-    <div className="flex flex-col items-center gap-4">
-      <a
-        href={href}
-        className="link-underline font-display text-[clamp(1.4rem,5vw,2.5rem)] leading-tight tracking-[0.01em] text-bone transition-colors duration-500 ease-out-expo hover:text-gold-bright focus-visible:text-gold-bright focus-visible:outline-none"
-      >
-        {value}
-      </a>
-      <CopyButton value={value} label={label} />
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-y-5 py-10 md:py-12">
+      <dt className="u-eyebrow text-muted">{label}</dt>
+      <dd className="col-span-2 row-start-2 min-w-0">
+        <a
+          href={href}
+          className="link-underline font-display text-[clamp(1.05rem,4.8vw,2.2rem)] leading-tight tracking-[0.01em] text-bone [overflow-wrap:anywhere] transition-colors duration-500 ease-out-expo hover:text-gold-bright focus-visible:text-gold-bright focus-visible:outline-none"
+        >
+          {value}
+        </a>
+      </dd>
+      <dd className="col-start-2 row-start-1 justify-self-end">
+        <CopyButton value={value} label={copyLabel} />
+      </dd>
     </div>
   )
 }
 
+/**
+ * Contact — an editorial two-column spread rather than a centred stack:
+ * the heading sits on the left, and the ways to reach Richard read as a
+ * ruled index on the right (label / value / copy per line).
+ */
 export function Component() {
   return (
     <>
       <Seo title="Contact" path="/contact" />
 
-      <section className="u-container grid min-h-[calc(100vh-var(--nav-h))] place-content-center py-32 text-center">
-        <Reveal as="header">
-          <p className="u-eyebrow text-gold">Get in Touch</p>
-          <h1 className="u-display mt-6 text-[clamp(2.75rem,9vw,6rem)] leading-[0.95] text-bone">
-            Contact
-          </h1>
-          <p className="mx-auto mt-7 max-w-md text-[0.98rem] leading-relaxed text-bone-dim [text-wrap:balance]">
-            Contact Richard directly by email or phone.
-          </p>
-        </Reveal>
+      <section className="u-container flex min-h-[calc(100vh-var(--nav-h))] items-center py-32">
+        <div className="grid w-full grid-cols-1 gap-x-[clamp(4rem,8vw,8rem)] gap-y-16 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
+          {/* Heading column */}
+          <Reveal as="header">
+            <p className="u-eyebrow text-gold">Get in Touch</p>
+            <h1 className="u-display mt-6 text-[clamp(2.75rem,8vw,5.5rem)] leading-[0.95] text-bone">
+              Contact
+            </h1>
+            <p className="mt-7 max-w-sm text-[0.98rem] leading-relaxed text-bone-dim [text-wrap:pretty]">
+              Contact Richard directly by email or phone.
+            </p>
+          </Reveal>
 
-        <Reveal
-          delay={0.12}
-          className="mt-16 flex flex-col items-center gap-12"
-        >
-          <ContactLine
-            href={`mailto:${site.email}`}
-            value={site.email}
-            label="email address"
-          />
-          <span aria-hidden className="block h-px w-12 bg-line" />
-          <ContactLine
-            href={site.phoneHref}
-            value={site.phone}
-            label="phone number"
-          />
-        </Reveal>
-
-        <Reveal delay={0.2} className="mt-16">
-          <p className="u-eyebrow text-muted">Based in</p>
-          <p className="mt-3 font-display text-[1rem] tracking-[0.04em] text-bone-dim">
-            {site.location}
-          </p>
-        </Reveal>
+          {/* Ruled contact index */}
+          <Reveal delay={0.12} className="self-center">
+            <dl className="divide-y divide-line-soft border-y border-line-soft">
+              <ContactRow
+                label="Email"
+                href={`mailto:${site.email}`}
+                value={site.email}
+                copyLabel="email address"
+              />
+              <ContactRow
+                label="Phone"
+                href={site.phoneHref}
+                value={site.phone}
+                copyLabel="phone number"
+              />
+            </dl>
+          </Reveal>
+        </div>
       </section>
     </>
   )

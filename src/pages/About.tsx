@@ -25,8 +25,8 @@ export function Component() {
             Richard James
           </h1>
           <p className="mt-6 max-w-prose text-[0.98rem] leading-relaxed text-bone-dim">
-            South African artist and sculptor working between Port Elizabeth
-            and Cape Town.
+            British artist based in Gqeberha (formerly Port Elizabeth),
+            South Africa.
           </p>
         </Reveal>
 

@@ -68,11 +68,10 @@ export default function Footer() {
         </div>
 
         {/* Baseline credit */}
-        <div className="mt-16 flex flex-col gap-3 border-t border-line-soft pt-8 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 border-t border-line-soft pt-8 text-xs text-muted">
           <p className="font-body">
             &copy; {year} {site.name}. All rights reserved.
           </p>
-          <p className="u-eyebrow text-faint">Studio &mdash; Port Elizabeth &amp; Cape Town</p>
         </div>
       </div>
     </footer>

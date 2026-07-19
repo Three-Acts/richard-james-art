@@ -71,11 +71,12 @@ export function personJsonLd(): Record<string, unknown> {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: site.name,
-    jobTitle: 'Artist & Sculptor',
+    jobTitle: 'Artist',
+    nationality: 'British',
     url: site.url,
     email: `mailto:${site.email}`,
     telephone: site.phone,
-    address: { '@type': 'PostalAddress', addressLocality: site.location, addressCountry: 'ZA' },
+    address: { '@type': 'PostalAddress', addressLocality: 'Gqeberha', addressCountry: 'ZA' },
   }
 }
 

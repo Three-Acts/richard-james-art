@@ -25,7 +25,7 @@ export function Component() {
             Richard James
           </h1>
           <p className="mt-6 max-w-prose text-[0.98rem] leading-relaxed text-bone-dim">
-            British artist based in Gqeberha (formerly Port Elizabeth),
+            South African / UK artist based in Gqeberha (Port Elizabeth),
             South Africa.
           </p>
         </Reveal>

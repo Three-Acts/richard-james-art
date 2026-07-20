@@ -1,6 +1,6 @@
 # Richard James — Portfolio
 
-A cinematic recreation + enhancement of [richardjamesart.com](https://www.richardjamesart.com/) for Richard James, a British artist based in Gqeberha (formerly Port Elizabeth), South Africa. Statically generated, SEO-complete, and deployed on Vercel.
+A cinematic recreation + enhancement of [richardjamesart.com](https://www.richardjamesart.com/) for Richard James, a South African / UK artist based in Gqeberha (Port Elizabeth), South Africa. Statically generated, SEO-complete, and deployed on Vercel.
 
 ## Highlights
 

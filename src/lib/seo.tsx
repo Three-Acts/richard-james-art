@@ -72,7 +72,10 @@ export function personJsonLd(): Record<string, unknown> {
     '@type': 'Person',
     name: site.name,
     jobTitle: 'Artist',
-    nationality: 'British',
+    nationality: [
+      { '@type': 'Country', name: 'South Africa' },
+      { '@type': 'Country', name: 'United Kingdom' },
+    ],
     url: site.url,
     email: `mailto:${site.email}`,
     telephone: site.phone,

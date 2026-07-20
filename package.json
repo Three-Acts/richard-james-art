@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Richard James — British artist based in South Africa. Cinematic portfolio (React + Vite + vite-react-ssg).",
+  "description": "Richard James — South African / UK artist based in Gqeberha, South Africa. Cinematic portfolio (React + Vite + vite-react-ssg).",
   "scripts": {
     "dev": "vite-react-ssg dev --host",
     "build": "node scripts/prepare-images.mjs && vite-react-ssg build && node scripts/gen-sitemap.mjs",

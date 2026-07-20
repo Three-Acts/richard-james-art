@@ -1,7 +1,7 @@
 import type { ContentBlock } from "@/types"
 
 export const aboutBlocks: ContentBlock[] = [
-  { tag: "p", text: "Richard James studied sculpture at Central Saint Martins in London, spent seven years as a Zen monk, and later trained in psychology. His background also includes work as a counsellor." },
+  { tag: "p", text: "Richard James studied sculpture at Central Saint Martins in London, spent seven years as a Zen monk, seven years teaching children and later trained as a counsellor." },
   { tag: "p", text: "Jean Laplanche, the French author and psychoanalyst, laid the foundations for what might be called—and become—“Affect Therapy”, where he coined the term the enigmatic message . This message is unconsciously communicated to the child by caregivers and remains hidden: unseen by both them and the child, yet profoundly influential in their lives." },
   { tag: "p", text: "A parallel can be drawn to the inherent implantation of the Unborn/Sunyata in Buddhist psychology. To completely comprehend the “enigmatic message” or the “Unborn” is not possible." },
   { tag: "p", text: "Fortunately, it will remain uncolonised, unpoliced, and resistant to pathology: a mystery. Yielding only occasionally to one who waits with humility and patience." },

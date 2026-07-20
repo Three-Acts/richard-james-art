@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import type { Project } from '@/types'
-import type { GestureCarouselApi } from '@/lib/useGestureCarousel'
+import type { CarouselApi } from '@/lib/carousel/useCarousel'
 
 /**
  * The fixed centre stage: every project's hero stacked absolutely, only the
@@ -21,7 +21,7 @@ export default function CenterStage({
 }: {
   projects: Project[]
   activeIndex: number
-  api: GestureCarouselApi
+  api: CarouselApi
 }) {
   const { registerFrame, reducedMotion } = api
   // Per-slide refs for the fade layer and the inner transform layer.

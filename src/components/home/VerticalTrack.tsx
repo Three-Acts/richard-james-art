@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Image from '@/components/ui/Image'
 import type { Project } from '@/types'
-import type { GestureCarouselApi } from '@/lib/useGestureCarousel'
+import type { CarouselApi } from '@/lib/carousel/useCarousel'
 
 /**
  * The thumbnail rail.
@@ -26,7 +26,7 @@ export default function VerticalTrack({
 }: {
   projects: Project[]
   activeIndex: number
-  api: GestureCarouselApi
+  api: CarouselApi
 }) {
   const { goToIndex, reducedMotion, registerFrame } = api
   const listRef = useRef<HTMLUListElement>(null)

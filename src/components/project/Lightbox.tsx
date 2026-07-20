@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import type { GalleryImage } from '@/types'
 import { getLenis } from '@/lib/useLenis'
-import { useGestureCarousel } from '@/lib/useGestureCarousel'
+import { useCarousel } from '@/lib/carousel/useCarousel'
 
 interface LightboxProps {
   images: GalleryImage[]
@@ -117,18 +117,20 @@ export default function Lightbox({ images, startIndex, title, onClose }: Lightbo
 const SPREAD = 52 // vw between neighbouring images
 const SIDE_SHRINK = 0.58 // neighbours render at (1 - this) scale ≈ 0.42
 
-// Looser, flick-friendly feel for the viewer than the home stage: a flick lands
-// immediately and a small scroll commits instead of easing back. The gesture
+// Looser, flick-friendly feel for the viewer than the home stage: a small
+// scroll commits instead of easing back, and a confident flick may carry
+// through up to three images with real momentum before snapping. The gesture
 // axis matches the layout — horizontal drags/swipes move the images (a mouse's
-// vertical-only wheel still works; the adapter adopts whichever axis carries
+// vertical-only wheel still works; the wheel adopts whichever axis carries
 // the gesture).
 const VIEWER_FEEL = {
   axis: 'x',
   wheelSpan: 110,
   dragSpan: 72,
-  flickVelocity: 1.1,
   commitThreshold: 0.22,
+  damping: 8.5,
   snapDuration: 0.58,
+  maxDragSteps: 3,
 } as const
 
 /** The multi-image horizontal coverflow (only used when there are ≥ 2 images). */
@@ -143,7 +145,7 @@ function Coverflow({
   title: string
   onClose: () => void
 }) {
-  const api = useGestureCarousel(images.length, startIndex, VIEWER_FEEL)
+  const api = useCarousel(images.length, startIndex, VIEWER_FEEL)
   const { stageRef, registerFrame, activeIndex } = api
 
   const slideRefs = useRef<HTMLDivElement[]>([])

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import { projects, years } from '@/data/projects'
 import { getLenis } from '@/lib/useLenis'
-import { useGestureCarousel } from '@/lib/useGestureCarousel'
+import { useCarousel } from '@/lib/carousel/useCarousel'
 import CenterStage from './CenterStage'
 import ProjectsGrid from './ProjectsGrid'
 import VerticalTrack, { MobileTrack } from './VerticalTrack'
@@ -217,7 +217,7 @@ function StageHome({
   onViewChange: (view: HomeView) => void
 }) {
   const N = projects.length
-  const api = useGestureCarousel(N)
+  const api = useCarousel(N)
   const { activeIndex, stageRef } = api
   const active = projects[activeIndex] ?? projects[0]
 
@@ -280,7 +280,7 @@ function StageHome({
 function ScrollHint({
   progressApi,
 }: {
-  progressApi: ReturnType<typeof useGestureCarousel>
+  progressApi: ReturnType<typeof useCarousel>
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const { reducedMotion, registerFrame } = progressApi

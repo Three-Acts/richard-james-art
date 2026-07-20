@@ -11,6 +11,17 @@ export interface GalleryImage {
 }
 
 /**
+ * A paired photographic work whose original label applies to either the whole
+ * pair or to the left/right images individually.
+ */
+export interface GalleryGroup {
+  /** A single source image containing the two photographs. */
+  src: string
+  /** Exact transcription of the physical label(s), in left-to-right order. */
+  captions: string[]
+}
+
+/**
  * A gallery entry is either a bare image path (no write-up) or a
  * `{ src, caption }` object. The bare-string form keeps data terse for the many
  * images that don't need a caption; use the object form to attach one. Run every
@@ -24,6 +35,12 @@ export interface Project {
   slug: string
   /** Display title, e.g. "Ghosts Become Ancestors" */
   title: string
+  /** Optional translated/transliterated subtitle. */
+  subtitle?: string
+  /** Optional title in its original writing system. */
+  originalTitle?: string
+  /** BCP 47 language tag for `originalTitle`, e.g. "fa" or "hi". */
+  originalTitleLang?: string
   /** Year of work, e.g. "2025" */
   year: string
   /** Materials & dimensions line */
@@ -41,6 +58,8 @@ export interface Project {
    * `{ src, caption }` object — normalise with `galleryImages(project)`.
    */
   images: GalleryEntry[]
+  /** Optional grouped presentation for paired photographic works. */
+  galleryGroups?: GalleryGroup[]
   /** Slug of the next project (wraps around) */
   next: string
 }

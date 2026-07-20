@@ -109,6 +109,21 @@ export default function Hero({ project, index, total }: HeroProps) {
             {project.title}
           </h1>
 
+          {project.subtitle && (
+            <p className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-body text-[clamp(1rem,2vw,1.35rem)] text-bone-dim">
+              {project.originalTitle && (
+                <bdi
+                  lang={project.originalTitleLang}
+                  dir="auto"
+                  className="text-[1.12em] text-gold-bright"
+                >
+                  {project.originalTitle}
+                </bdi>
+              )}
+              <span>{project.subtitle}</span>
+            </p>
+          )}
+
           <p className="mt-5 flex items-center gap-4 font-body text-sm text-bone-dim">
             <span className="u-display tracking-[0.22em] text-gold-bright">
               {project.year}

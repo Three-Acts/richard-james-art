@@ -14,6 +14,10 @@ interface ProjectMetaProps {
  */
 export default function ProjectMeta({ project }: ProjectMetaProps) {
   const hasText = project.description.trim().length > 0
+  const paragraphs = project.description
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
 
   return (
     <section className="u-container py-[clamp(4rem,12vh,9rem)]">
@@ -28,7 +32,7 @@ export default function ProjectMeta({ project }: ProjectMetaProps) {
           </div>
           <div className="flex flex-col gap-2">
             <dt className="u-eyebrow">Medium / Dimensions</dt>
-            <dd className="font-body text-base leading-relaxed text-bone-dim">
+            <dd className="whitespace-pre-line font-body text-base leading-relaxed text-bone-dim">
               {project.medium}
             </dd>
           </div>
@@ -39,9 +43,14 @@ export default function ProjectMeta({ project }: ProjectMetaProps) {
       {hasText && (
         <Reveal delay={0.08}>
           <div className="u-prose mx-auto mt-[clamp(3rem,8vh,6rem)]">
-            <p className="text-balance text-center font-body text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.85] text-bone-dim">
-              {project.description}
-            </p>
+            {paragraphs.map((paragraph, index) => (
+              <p
+                key={index}
+                className="text-balance text-center font-body text-[clamp(1.05rem,1.6vw,1.35rem)] leading-[1.85] text-bone-dim"
+              >
+                {paragraph}
+              </p>
+            ))}
             <div className="mt-12 flex justify-center">
               <Link to="/essay" className="btn-line" aria-label="Read the essay">
                 Read Essay

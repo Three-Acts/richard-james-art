@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { projects, years } from '@/data/projects'
 import type { Project } from '@/types'
@@ -34,6 +34,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           />
         </div>
 
+        {/* Grid keeps it spare — just the title + year, no medium/materials. */}
         <div className="mt-5 flex items-baseline justify-between gap-4">
           <h2 className="u-display text-balance text-base leading-tight text-bone transition-colors duration-500 ease-out-expo group-hover:text-gold-bright sm:text-lg">
             {project.title}
@@ -42,12 +43,6 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             {project.year}
           </span>
         </div>
-
-        {project.medium && (
-          <p className="mt-1.5 line-clamp-1 text-[0.82rem] leading-relaxed text-muted">
-            {project.medium}
-          </p>
-        )}
       </Link>
     </Reveal>
   )
@@ -57,15 +52,21 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
  * The "Grid" display of the home experience — every work, newest first, as a
  * normally-scrolling grid. Deliberately no header or tab row of its own: the
  * chrome is shared with the slideshow, so swapping views shifts as little as
- * possible. The same left year rail navigates it (fixed to the viewport here,
- * since the document scrolls): clicking a year scrolls to that year's first
- * work, and the lit year tracks the cards under the reading band as you
- * scroll. Below md the rail is hidden and a year chip row stands in.
+ * possible. The desktop year rail lives at the top level (HomeExperience) and
+ * navigates this via the reported goToIndex: clicking a year scrolls to that
+ * year's first work, and the lit year tracks the cards under the reading band
+ * as you scroll (reported up through onNav). Below md the rail is hidden and a
+ * year chip row stands in.
  */
 const navHeight = () =>
   document.querySelector('header')?.getBoundingClientRect().height ?? 80
 
-export default function ProjectsGrid({ railFooter }: { railFooter?: React.ReactNode }) {
+export default function ProjectsGrid({
+  onNav,
+}: {
+  /** Report the active work + navigator up to the persistent year rail. */
+  onNav?: (nav: { activeIndex: number; goToIndex: (i: number) => void }) => void
+}) {
   const [activeIndex, setActiveIndex] = useState(0)
   const itemRefs = useRef<(HTMLLIElement | null)[]>([])
   const setItem = (i: number) => (el: HTMLLIElement | null) => {
@@ -139,7 +140,8 @@ export default function ProjectsGrid({ railFooter }: { railFooter?: React.ReactN
     }
   }, [yearStarts])
 
-  const goToIndex = (i: number) => {
+  // Stable so the onNav report (below) doesn't fire on every render.
+  const goToIndex = useCallback((i: number) => {
     const el = itemRefs.current[i]
     if (!el) return
     // The chosen year lights at once and holds through (and after) the glide.
@@ -151,24 +153,20 @@ export default function ProjectsGrid({ railFooter }: { railFooter?: React.ReactN
     const lenis = getLenis()
     if (lenis) lenis.scrollTo(el, { offset })
     else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + offset, behavior: 'smooth' })
-  }
+  }, [])
+
+  // Feed the persistent (outside-the-fade) year rail — the lit year tracks the
+  // scroll spy, and clicking a year jumps the grid.
+  useEffect(() => {
+    onNav?.({ activeIndex, goToIndex })
+  }, [activeIndex, goToIndex, onNav])
 
   return (
     <section
       aria-label="All works"
       className="u-container pb-32 pt-5 md:pl-[clamp(6.5rem,10vw,9rem)] md:pt-[clamp(2rem,5vh,3.25rem)]"
     >
-      {/* Desktop: the slideshow's year rail, same spot, now viewport-fixed. */}
-      <YearFilter
-        projects={projects}
-        years={years}
-        activeIndex={activeIndex}
-        goToIndex={goToIndex}
-        position="fixed"
-        footer={railFooter}
-      />
-
-      {/* Mobile: chip row standing in for the rail. */}
+      {/* Mobile: chip row standing in for the (desktop-only) rail. */}
       <div className="mb-8 md:hidden">
         <YearFilter
           projects={projects}

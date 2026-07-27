@@ -28,8 +28,8 @@ export default function YearFilter({
   /** Rail only: 'absolute' pins to the stage, 'fixed' to the viewport (the
    *  grid display scrolls the document but keeps the rail in the same spot). */
   position?: 'absolute' | 'fixed'
-  /** Rail only: rendered beneath the year list — the rail is the home for all
-   *  navigation, so view controls (the display toggle) dock here. */
+  /** Rail only: docked beneath the year list — the rail is the home for all
+   *  navigation, so the display toggle sits here on desktop. */
   footer?: React.ReactNode
 }) {
   // First index in track order for each year — that's the jump target.

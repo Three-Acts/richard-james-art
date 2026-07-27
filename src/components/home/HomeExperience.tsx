@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { memo, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import { projects, years } from '@/data/projects'
@@ -11,40 +11,48 @@ import TitlePlate from './TitlePlate'
 import YearFilter from './YearFilter'
 
 /**
- * The signature home experience, in one of two visitor-switchable displays
- * that share their chrome — the display toggle (top right) and, on desktop,
- * the left year rail sit in the same place in both, so swapping shifts as
- * little as possible. The swap itself is a simple fade: the outgoing display
- * fades out, the incoming one fades in.
+ * The signature home experience, in one of two visitor-switchable displays.
+ *
+ * The chrome is shared and stays put across a swap: on desktop the left year
+ * rail (with the display toggle docked beneath it) and on mobile the toggle
+ * floating at the foot of the viewport. Only the CONTENT — the hero images,
+ * the thumbnail rail and the title — cross-fades: the outgoing content
+ * dissolves out and the incoming one dissolves in through one PERSISTENT
+ * wrapper (which is why the dissolve stays buttery — the element never
+ * unmounts mid-transition). The year rail and toggle live OUTSIDE that
+ * wrapper, so the years on the left never flicker while you switch.
+ *
+ * Because the rail sits outside the displays, each display reports its active
+ * work + navigator up (onNav) so the one rail can light the right year and
+ * jump on click for whichever display is on screen.
  *
  * "Slideshow" (default, and what SSR ships): the cinematic stage.
  *  - Desktop (md+): a fixed full-viewport stage that SNAPS between works.
- *    A wheel flick, a vertical drag (anywhere — stage or rail), or the arrow
- *    keys move a continuous position that commits to the next/previous work
- *    past a threshold, else eases back (see useGestureCarousel). The
- *    cross-fade and rail translate are driven imperatively from that
- *    position; the rounded active index updates title / year / aria.
- *  - Mobile (< md): a calmer stacked layout — a full-width hero near the top,
- *    the title plate beneath, a horizontal scroll-snap thumbnail strip, and a
- *    year chip row. Active is set by an IntersectionObserver on the strip.
+ *    A wheel flick, a vertical drag or the arrow keys move a continuous
+ *    position that commits to the next/previous work past a threshold. The
+ *    cross-fade and rail translate are driven imperatively from that position.
+ *  - Mobile (< md): a calmer single-screen layout — the whole artwork (a link
+ *    to its page), its title + counter, and a horizontal thumbnail strip.
  *
- * "Grid": every work as a normally-scrolling grid (see ProjectsGrid), with
- *  the same year rail navigating it.
+ * "Grid": every work as a normally-scrolling grid (see ProjectsGrid), with the
+ *  same year rail navigating it.
  *
- * The choice persists for the session, so coming back from a detail page
- * lands on the same display. The stage subtree fully unmounts/remounts on
- * toggle — its gesture listeners bind on mount.
- *
- * SSR / no-JS: the first project's hero, title and meta are present in the
- * markup (CenterStage + TitlePlate render from props), so the page is never
- * blank. The fancy mechanic only enhances on the client.
+ * The choice persists for the session. SSR / no-JS: the first project's hero,
+ * title and meta are present in the markup, so the page is never blank.
  */
 
 type HomeView = 'stage' | 'grid'
 const VIEW_KEY = 'home-view'
 // Fade-out wait before the swap; the CSS transition runs slightly faster so
-// the outgoing display has fully vanished when the incoming one mounts.
+// the outgoing content has fully vanished when the incoming one mounts.
 const FADE_MS = 300
+
+/** Active work + how to jump to one, reported up by the on-screen display so
+ *  the persistent (outside-the-fade) year rail can drive whichever is shown. */
+export interface HomeNav {
+  activeIndex: number
+  goToIndex: (index: number) => void
+}
 
 export default function HomeExperience() {
   // `view` is the chosen display (drives the toggle + persistence);
@@ -52,6 +60,9 @@ export default function HomeExperience() {
   const [view, setView] = useState<HomeView>('stage')
   const [shown, setShown] = useState<HomeView>('stage')
   const [fading, setFading] = useState(false)
+  // The active work + navigator of whichever display is on screen, feeding the
+  // persistent year rail. Default lights the newest year for SSR / first paint.
+  const [nav, setNav] = useState<HomeNav>({ activeIndex: 0, goToIndex: () => {} })
   const fadeTimer = useRef<number | undefined>(undefined)
 
   // SSR always ships the slideshow; restore the visitor's choice only after
@@ -97,9 +108,9 @@ export default function HomeExperience() {
 
   return (
     <div className="bg-ink text-bone">
-      {/* The displays cross-fade through this wrapper. On desktop the toggle
-          docks under the year rail inside each display — identical spot in
-          both, so it reads as staying put through the fade. */}
+      {/* Content cross-fades through this ONE persistent wrapper — unmounting
+          the view each swap would kill the buttery dissolve. The year rail and
+          toggles sit OUTSIDE it, so the years never flicker as you switch. */}
       <div
         className="transition-opacity duration-[280ms] ease-out"
         style={{
@@ -108,11 +119,25 @@ export default function HomeExperience() {
         }}
       >
         {shown === 'grid' ? (
-          <GridHome view={view} onViewChange={changeView} />
+          <GridHome onNav={setNav} />
         ) : (
-          <StageHome view={view} onViewChange={changeView} />
+          <StageHome onNav={setNav} />
         )}
       </div>
+
+      {/* Desktop: the year rail holds steady through every swap, the display
+          toggle docked beneath the year list. Hidden below md. */}
+      <YearFilter
+        projects={projects}
+        years={years}
+        activeIndex={nav.activeIndex}
+        goToIndex={nav.goToIndex}
+        position="fixed"
+        footer={<ViewToggle view={view} onViewChange={changeView} />}
+      />
+
+      {/* Mobile: the toggle floats at the foot of the viewport. */}
+      <MobileViewToggle view={view} onViewChange={changeView} />
     </div>
   )
 }
@@ -158,7 +183,7 @@ function ViewToggle({
     <div
       role="group"
       aria-label="Display works as"
-      className={`pointer-events-auto inline-flex items-center gap-1 rounded-full border border-line-soft bg-ink/50 p-1 backdrop-blur-sm ${className}`}
+      className={`pointer-events-auto inline-flex items-center gap-1 rounded-full border border-line-soft bg-ink/70 p-1 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-md ${className}`}
     >
       {options.map((o) => {
         const isActive = view === o.value
@@ -183,11 +208,10 @@ function ViewToggle({
   )
 }
 
-/* --------------------------------------------------------------------- */
-
-/** The grid display. Desktop chrome (rail) lives inside ProjectsGrid; the
- *  mobile toggle row mirrors the slideshow's so the control doesn't move. */
-function GridHome({
+/** Mobile-only: the display toggle pinned to the foot of the viewport. The
+ *  wrapper is click-through so it never steals gestures; only the pill is
+ *  interactive. Sits below the nav / menu (z) but above the content. */
+function MobileViewToggle({
   view,
   onViewChange,
 }: {
@@ -195,26 +219,40 @@ function GridHome({
   onViewChange: (view: HomeView) => void
 }) {
   return (
-    <div style={{ paddingTop: 'var(--nav-h)' }}>
-      <div className="flex justify-end px-[var(--gutter)] pt-3 md:hidden">
-        <ViewToggle view={view} onViewChange={onViewChange} />
-      </div>
-      <ProjectsGrid
-        railFooter={<ViewToggle view={view} onViewChange={onViewChange} />}
-      />
+    <div
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex justify-center md:hidden"
+      style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+    >
+      <ViewToggle view={view} onViewChange={onViewChange} />
     </div>
   )
 }
 
 /* --------------------------------------------------------------------- */
 
-/** The cinematic slideshow display (desktop stage + mobile stack). */
-function StageHome({
-  view,
-  onViewChange,
+/** The grid display. The year rail lives at the top level now, so this is just
+ *  the grid; it reports its active work + navigator up via onNav. */
+const GridHome = memo(function GridHome({
+  onNav,
 }: {
-  view: HomeView
-  onViewChange: (view: HomeView) => void
+  onNav: (nav: HomeNav) => void
+}) {
+  return (
+    <div style={{ paddingTop: 'var(--nav-h)' }}>
+      <ProjectsGrid onNav={onNav} />
+    </div>
+  )
+})
+
+/* --------------------------------------------------------------------- */
+
+/** The cinematic slideshow display (desktop stage + mobile stack). Memoised so
+ *  a rail update (parent re-render) doesn't re-reconcile the 40-slide stage —
+ *  it only re-renders on its own active-index change. */
+const StageHome = memo(function StageHome({
+  onNav,
+}: {
+  onNav: (nav: HomeNav) => void
 }) {
   const N = projects.length
   const api = useCarousel(N)
@@ -224,6 +262,12 @@ function StageHome({
   // Mobile gets its own active index (IO-driven), independent of scroll trigger.
   const [mobileIndex, setMobileIndex] = useState(0)
   const mobileActive = projects[mobileIndex] ?? projects[0]
+
+  // Feed the persistent year rail: the desktop stage owns the rail's active
+  // year + jump target (the rail is hidden on mobile).
+  useEffect(() => {
+    onNav({ activeIndex, goToIndex: api.goToIndex })
+  }, [activeIndex, api.goToIndex, onNav])
 
   return (
     <>
@@ -243,13 +287,6 @@ function StageHome({
         >
           <CenterStage projects={projects} activeIndex={activeIndex} api={api} />
           <VerticalTrack projects={projects} activeIndex={activeIndex} api={api} />
-          <YearFilter
-            projects={projects}
-            years={years}
-            activeIndex={activeIndex}
-            goToIndex={api.goToIndex}
-            footer={<ViewToggle view={view} onViewChange={onViewChange} />}
-          />
           <TitlePlate
             project={active}
             index={activeIndex}
@@ -268,12 +305,11 @@ function StageHome({
           activeIndex={mobileIndex}
           setActiveIndex={setMobileIndex}
           active={mobileActive}
-          toggle={<ViewToggle view={view} onViewChange={onViewChange} />}
         />
       </div>
     </>
   )
-}
+})
 
 /* --------------------------------------------------------------------- */
 
@@ -308,43 +344,48 @@ function ScrollHint({
 
 /* --------------------------------------------------------------------- */
 
+/**
+ * Mobile slideshow: pared back to fit one screen (nothing pushed below the
+ * fold). Just the artwork, its title + counter, and the thumbnail track — the
+ * whole artwork is the link to its page, so there's no separate "View Details"
+ * button, and the year chips are gone. The hero flexes to fill whatever height
+ * is left and shows the WHOLE work (contain), never cropped. Room is left at
+ * the foot for the floating display toggle.
+ */
 function MobileHome({
   activeIndex,
   setActiveIndex,
   active,
-  toggle,
 }: {
   activeIndex: number
   setActiveIndex: (i: number) => void
   active: (typeof projects)[number]
-  toggle: ReactNode
 }) {
   return (
-    <section className="flex min-h-screen flex-col" style={{ paddingTop: 'var(--nav-h)' }}>
-      {/* Display toggle above the hero. */}
-      <div className="flex justify-end px-[var(--gutter)] pt-3">{toggle}</div>
-
-      {/* Full-width hero near the top. */}
-      <div className="relative w-full px-[var(--gutter)] pt-4">
+    <section
+      className="flex h-[100svh] flex-col overflow-hidden"
+      style={{ paddingTop: 'var(--nav-h)' }}
+    >
+      {/* Hero — fills the space left over, whole artwork visible, tappable. */}
+      <div className="relative min-h-0 flex-1 px-[var(--gutter)] pt-3">
         <Link
           to={`/projects/${active.slug}`}
           aria-label={`View ${active.title}`}
-          className="block"
+          className="block h-full"
         >
           <Image
             src={active.hero}
             alt={active.title}
             priority
-            aspectRatio="3/4"
             sizes="100vw"
-            className="w-full rounded-[2px] object-cover"
+            className="h-full w-full [&>img]:!object-contain"
           />
         </Link>
       </div>
 
-      {/* Title plate. */}
-      <div className="px-[var(--gutter)] pt-6">
-        <div className="mb-3 flex items-center gap-3">
+      {/* Title + counter (no CTA — the artwork above is the link). */}
+      <div className="shrink-0 px-[var(--gutter)] pt-4">
+        <div className="mb-2.5 flex items-center gap-3">
           <span className="u-eyebrow text-gold">
             {String(activeIndex + 1).padStart(2, '0')}
             <span className="text-faint"> / {String(projects.length).padStart(2, '0')}</span>
@@ -354,36 +395,22 @@ function MobileHome({
         <h2 className="overflow-hidden">
           <Link
             to={`/projects/${active.slug}`}
-            className="u-display link-underline inline-block text-[clamp(1.6rem,7vw,2.4rem)] leading-[1.04] text-bone"
+            className="u-display link-underline inline-block text-[clamp(1.5rem,6.5vw,2.2rem)] leading-[1.04] text-bone"
           >
             {active.title}
           </Link>
         </h2>
-        <div className="mt-5">
-          <Link to={`/projects/${active.slug}`} className="btn-line">
-            View Details
-            <span aria-hidden="true">→</span>
-          </Link>
-        </div>
       </div>
 
-      {/* Thumbnail strip. */}
-      <div className="mt-7 border-t border-line-soft pt-4">
+      {/* Thumbnail track, clear of the floating toggle beneath it. */}
+      <div
+        className="mt-4 shrink-0 border-t border-line-soft pt-3"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 4.5rem)' }}
+      >
         <MobileTrack
           projects={projects}
           activeIndex={activeIndex}
           onSelect={setActiveIndex}
-        />
-      </div>
-
-      {/* Year chips. */}
-      <div className="mt-4 px-[var(--gutter)] pb-10">
-        <YearFilter
-          projects={projects}
-          years={years}
-          activeIndex={activeIndex}
-          goToIndex={setActiveIndex}
-          variant="chips"
         />
       </div>
     </section>

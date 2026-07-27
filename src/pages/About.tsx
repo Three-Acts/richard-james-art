@@ -80,7 +80,6 @@ export function Component() {
               <span className="u-display text-[0.8rem] text-bone-dim">
                 Richard James
               </span>
-              <span className="u-eyebrow text-faint">{site.location}</span>
             </figcaption>
           </Reveal>
         </div>

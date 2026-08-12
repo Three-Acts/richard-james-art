@@ -418,10 +418,24 @@ export function useCarousel(
         s.lastWheelAt = 0
         dragStart = s.position
         gsap.set(proxy, { x: 0, y: 0 })
+
+        // Bound the gesture to the steps it is allowed to travel, NOT to the
+        // whole list. Previously a flick sailed visibly through every item
+        // before snap() yanked it back to at most maxDragSteps — so the same
+        // swipe felt wilder the more items a carousel held, which is exactly
+        // the count-sensitivity it should never have had. With the bounds in
+        // step space, edgeResistance now rubber-bands at the end of the
+        // gesture's own range and one swipe reads identically at 3 items or 30.
+        // Position maps as `dragStart - value / dragSpan`, so the axis bounds
+        // invert: travelling toward a HIGHER index is a NEGATIVE proxy value.
+        const nearest = Math.max(0, dragStart - maxDragSteps)
+        const furthest = Math.min(lastIndex, dragStart + maxDragSteps)
+        const lower = (dragStart - furthest) * dragSpan
+        const upper = (dragStart - nearest) * dragSpan
         this.applyBounds(
           horizontal
-            ? { minX: (dragStart - lastIndex) * dragSpan, maxX: dragStart * dragSpan }
-            : { minY: (dragStart - lastIndex) * dragSpan, maxY: dragStart * dragSpan },
+            ? { minX: lower, maxX: upper }
+            : { minY: lower, maxY: upper },
         )
       },
       onDrag(this: Draggable) {

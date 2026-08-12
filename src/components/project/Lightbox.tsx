@@ -117,20 +117,31 @@ export default function Lightbox({ images, startIndex, title, onClose }: Lightbo
 const SPREAD = 52 // vw between neighbouring images
 const SIDE_SHRINK = 0.58 // neighbours render at (1 - this) scale ≈ 0.42
 
-// Looser, flick-friendly feel for the viewer than the home stage: a small
-// scroll commits instead of easing back, and a confident flick may carry
-// through up to three images with real momentum before snapping. The gesture
-// axis matches the layout — horizontal drags/swipes move the images (a mouse's
-// vertical-only wheel still works; the wheel adopts whichever axis carries
-// the gesture).
+// One deliberate image per gesture. The gesture axis matches the layout —
+// horizontal drags/swipes move the images (a mouse's vertical-only wheel still
+// works; the wheel adopts whichever axis carries the gesture).
+//
+// These numbers are absolute: dragSpan/wheelSpan are pixels per image, so the
+// mapping from finger travel to movement is pure delta and does not change with
+// the number of images in the gallery. A 21-image work swipes exactly like a
+// 3-image one.
+//
+// The viewer used to run looser than the home stage — a 72px step, a 0.22
+// commit threshold (22% of a step and it advanced) and up to 3 images per
+// flick — which read as hair-trigger on the long galleries. Now a swipe has to
+// cover half an image to move at all, and can only ever move one.
 const VIEWER_FEEL = {
   axis: 'x',
-  wheelSpan: 110,
-  dragSpan: 72,
-  commitThreshold: 0.22,
-  damping: 8.5,
-  snapDuration: 0.58,
-  maxDragSteps: 3,
+  /** Pixels of wheel/trackpad travel per image. */
+  wheelSpan: 180,
+  /** Pixels of finger/pointer travel per image. */
+  dragSpan: 150,
+  /** Half an image of travel before it commits to the next one. */
+  commitThreshold: 0.5,
+  damping: 7.5,
+  snapDuration: 0.62,
+  /** A flick advances by one, however hard it is thrown. */
+  maxDragSteps: 1,
 } as const
 
 /** The multi-image horizontal coverflow (only used when there are ≥ 2 images). */

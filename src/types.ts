@@ -11,17 +11,6 @@ export interface GalleryImage {
 }
 
 /**
- * A paired photographic work whose original label applies to either the whole
- * pair or to the left/right images individually.
- */
-export interface GalleryGroup {
-  /** A single source image containing the two photographs. */
-  src: string
-  /** Exact transcription of the physical label(s), in left-to-right order. */
-  captions: string[]
-}
-
-/**
  * A gallery entry is either a bare image path (no write-up) or a
  * `{ src, caption }` object. The bare-string form keeps data terse for the many
  * images that don't need a caption; use the object form to attach one. Run every
@@ -58,8 +47,14 @@ export interface Project {
    * `{ src, caption }` object — normalise with `galleryImages(project)`.
    */
   images: GalleryEntry[]
-  /** Optional grouped presentation for paired photographic works. */
-  galleryGroups?: GalleryGroup[]
+  /**
+   * Show only every Nth image in the gallery grid, starting with the first.
+   * Every image stays in the fullscreen viewer, so the hidden ones are still
+   * reachable by swiping — use this for works documented in near-identical
+   * runs, where the grid should carry one representative per piece rather than
+   * every frame. Omit (or 1) to show them all.
+   */
+  gridStride?: number
   /** Slug of the next project (wraps around) */
   next: string
 }

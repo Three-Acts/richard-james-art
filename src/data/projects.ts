@@ -463,15 +463,9 @@ export const projects: Project[] = [
     hero: "/images/projects/black-photos-1995/black-photos-1995-01.avif",
     thumb: "/images/projects/black-photos-1995/black-photos-1995-01.avif",
     images: ["/images/projects/black-photos-1995/black-photos-1995-01.avif","/images/projects/black-photos-1995/black-photos-1995-02.avif","/images/projects/black-photos-1995/black-photos-1995-03.avif","/images/projects/black-photos-1995/black-photos-1995-04.avif","/images/projects/black-photos-1995/black-photos-1995-05.avif","/images/projects/black-photos-1995/black-photos-1995-06.avif","/images/projects/black-photos-1995/black-photos-1995-07.avif","/images/projects/black-photos-1995/black-photos-1995-08.avif","/images/projects/black-photos-1995/black-photos-1995-09.avif","/images/projects/black-photos-1995/black-photos-1995-10.avif","/images/projects/black-photos-1995/black-photos-1995-11.avif","/images/projects/black-photos-1995/black-photos-1995-12.avif","/images/projects/black-photos-1995/black-photos-1995-13.avif","/images/projects/black-photos-1995/black-photos-1995-14.avif","/images/projects/black-photos-1995/black-photos-1995-15.avif","/images/projects/black-photos-1995/black-photos-1995-16.avif","/images/projects/black-photos-1995/black-photos-1995-17.avif","/images/projects/black-photos-1995/black-photos-1995-18.avif","/images/projects/black-photos-1995/black-photos-1995-19.avif","/images/projects/black-photos-1995/black-photos-1995-20.avif","/images/projects/black-photos-1995/black-photos-1995-21.avif"],
-    galleryGroups: [
-      { src: "/images/projects/black-photos-1995/black-photos-1995-02.avif", captions: ["Side Splitting", "Side Splitting"] },
-      { src: "/images/projects/black-photos-1995/black-photos-1995-05.avif", captions: ["Glenne", "Brenne"] },
-      { src: "/images/projects/black-photos-1995/black-photos-1995-08.avif", captions: ["Swallow"] },
-      { src: "/images/projects/black-photos-1995/black-photos-1995-11.avif", captions: ["Throat and Room"] },
-      { src: "/images/projects/black-photos-1995/black-photos-1995-14.avif", captions: ["Cling"] },
-      { src: "/images/projects/black-photos-1995/black-photos-1995-17.avif", captions: ["feed and cut"] },
-      { src: "/images/projects/black-photos-1995/black-photos-1995-20.avif", captions: ["Cynic", "Cynic"] },
-    ],
+    // Each work is documented in a run of three frames, so the grid shows the
+    // first of each (01, 04, 07, …) and the viewer still carries all 21.
+    gridStride: 3,
     next: "names-and-words-1994",
   },
   {

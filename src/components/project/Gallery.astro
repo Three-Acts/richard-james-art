@@ -9,108 +9,81 @@ export interface Props {
 }
 
 /**
- * The full gallery of a project's images. Free-form heights via CSS
- * multi-column masonry: one column on mobile, two on desktop. Each artwork keeps
- * its natural aspect ratio (no forced ratio) and rises in on scroll with a small
- * per-item delay for a slow, gallery-grade cascade.
+ * The gallery of a project's images: a two-column grid on desktop, one column on
+ * mobile, filled in reading order — row by row, left then right. It is a real
+ * CSS grid rather than CSS multi-column so that order is row-major; multi-column
+ * fills the entire left column before starting the right, which makes the eye
+ * jump down and back up again.
  *
- * Each image may carry a short write-up, shown as a caption beneath it. Clicking
- * any image opens the fullscreen viewer, which is the one genuinely interactive
- * piece here — it shares the gesture engine with the home stage, so it stays
- * React. It is pulled in by a dynamic import on the first click (see
- * mountLightbox.tsx), so the grid itself is static HTML and a visitor who only
- * reads the page never downloads the framework.
+ * Each image keeps its natural aspect ratio and rises in on scroll, the
+ * right-hand image of each row a beat behind the left.
+ *
+ * A project may set `gridStride` to show only every Nth image here (works
+ * documented as near-identical runs of frames). The fullscreen viewer always
+ * receives the COMPLETE list, so the frames omitted from the grid are still
+ * reachable by swiping — which is why each button carries its index into the
+ * full list, not into the visible subset.
+ *
+ * Clicking an image opens that viewer, the one genuinely interactive piece here.
+ * It shares the gesture engine with the home stage, so it stays React and is
+ * pulled in by a dynamic import on the first click (see mountLightbox.tsx) —
+ * a visitor who only reads the page never downloads the framework.
  */
 const { project } = Astro.props
 
-const groups = project.galleryGroups
-const images = groups
-  ? groups.map((group) => ({ src: group.src, caption: group.captions.join(' / ') }))
-  : galleryImages(project)
+const images = galleryImages(project)
 const total = images.length
 
-const buttonClass =
-  'group block w-full cursor-zoom-in overflow-hidden focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-gold'
+const stride = Math.max(1, project.gridStride ?? 1)
+// Keep each image's position in the full list — that index is what the viewer opens on.
+const visible = images
+  .map((image, index) => ({ image, index }))
+  .filter(({ index }) => index % stride === 0)
 ---
 
 <section
   data-gallery
   aria-label={`${project.title} — gallery`}
-  class={
-    groups
-      ? 'w-full px-[var(--gutter)] pb-[clamp(5rem,14vh,11rem)]'
-      : 'u-container pb-[clamp(5rem,14vh,11rem)]'
-  }
+  class="u-container pb-[clamp(5rem,14vh,11rem)]"
 >
-  {
-    groups ? (
-      <div class="flex flex-col gap-[clamp(5rem,13vh,10rem)]">
-        {groups.map((group, i) => (
-          <Reveal as="figure" y={32}>
+  <div class="grid grid-cols-1 items-start gap-6 md:grid-cols-2 md:gap-8">
+    {
+      visible.map(({ image, index }, position) => (
+        <figure>
+          {/* Stagger by column, so each row cascades left → right. */}
+          <Reveal y={32} delay={(position % 2) * 0.08}>
             <button
               type="button"
-              data-lightbox-open={i}
-              aria-label={`View ${project.title} — paired photograph ${i + 1} of ${total} full screen`}
-              class={buttonClass}
+              data-lightbox-open={index}
+              aria-label={
+                total > 1
+                  ? `View ${project.title} — image ${index + 1} of ${total} full screen`
+                  : `View ${project.title} full screen`
+              }
+              class="group block w-full cursor-zoom-in overflow-hidden focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-gold"
             >
               <Image
-                src={group.src}
-                alt={`${project.title} — paired photograph ${i + 1} of ${total}; text: ${group.captions.join(' / ')}`}
-                sizes="100vw"
-                class="w-full transition-transform duration-[900ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.01]"
+                src={image.src}
+                alt={
+                  total > 1
+                    ? `${project.title} — view ${index + 1} of ${total}`
+                    : project.title
+                }
+                sizes="(min-width: 768px) 50vw, 100vw"
+                class="w-full transition-transform duration-[900ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.02]"
               />
             </button>
 
-            <figcaption class="mt-5 w-full md:w-1/3 lg:w-1/4">
-              <p class="u-eyebrow text-faint">Text in work</p>
-              <dl class="mt-3 border-t border-line-soft pt-3 font-body text-sm leading-relaxed text-bone-dim">
-                {group.captions.map((caption, captionIndex) => (
-                  <div class="grid grid-cols-[3.25rem_1fr] gap-3 [&:not(:first-child)]:mt-2">
-                    <dt class="text-muted">
-                      {group.captions.length > 1 ? (captionIndex === 0 ? 'Left' : 'Right') : 'Pair'}
-                    </dt>
-                    <dd>{caption}</dd>
-                  </div>
-                ))}
-              </dl>
-            </figcaption>
+            {image.caption && (
+              <figcaption class="mt-3 max-w-[42rem] font-body text-sm leading-relaxed text-bone-dim">
+                {image.caption}
+              </figcaption>
+            )}
           </Reveal>
-        ))}
-      </div>
-    ) : (
-      <div class="columns-1 gap-6 md:columns-2 md:gap-8">
-        {images.map((img, i) => (
-          <figure class="mb-6 break-inside-avoid md:mb-8">
-            <Reveal y={32} delay={(i % 2) * 0.08}>
-              <button
-                type="button"
-                data-lightbox-open={i}
-                aria-label={
-                  total > 1
-                    ? `View ${project.title} — image ${i + 1} of ${total} full screen`
-                    : `View ${project.title} full screen`
-                }
-                class={buttonClass}
-              >
-                <Image
-                  src={img.src}
-                  alt={total > 1 ? `${project.title} — view ${i + 1} of ${total}` : project.title}
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  class="w-full transition-transform duration-[900ms] ease-[var(--ease-out-expo)] group-hover:scale-[1.02]"
-                />
-              </button>
-
-              {img.caption && (
-                <figcaption class="mt-3 max-w-[42rem] font-body text-sm leading-relaxed text-bone-dim">
-                  {img.caption}
-                </figcaption>
-              )}
-            </Reveal>
-          </figure>
-        ))}
-      </div>
-    )
-  }
+        </figure>
+      ))
+    }
+  </div>
 
   {/* The viewer's data, handed to the on-demand React chunk. Kept out of the
       click handler's bundle so the payload scales with the project, not the JS. */}

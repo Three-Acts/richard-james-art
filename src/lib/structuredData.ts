@@ -1,8 +1,7 @@
 /**
- * Optional JSON-LD builders — pure, side-effect-free helpers that return plain
- * schema.org objects. Pages can pass these to <Seo jsonLd={...} /> to enrich
- * structured data without touching seo.tsx (which already ships Person /
- * VisualArtwork builders).
+ * JSON-LD builders — pure, side-effect-free helpers that return plain schema.org
+ * objects. Pages pass these to <Seo jsonLd={...} />, which serialises them into
+ * the pre-rendered <head>.
  *
  * Everything is typed as Record<string, unknown> so it slots straight into the
  * Seo `jsonLd` prop, and every URL is absolutised against site.url.
@@ -16,6 +15,46 @@ type JsonLd = Record<string, unknown>
 function abs(path: string): string {
   if (/^https?:\/\//.test(path)) return path
   return `${site.url}${path.startsWith('/') ? path : `/${path}`}`
+}
+
+/** JSON-LD for the whole site / a page that represents the artist. */
+export function personJsonLd(): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: site.name,
+    jobTitle: 'Artist',
+    nationality: [
+      { '@type': 'Country', name: 'South Africa' },
+      { '@type': 'Country', name: 'United Kingdom' },
+    ],
+    url: site.url,
+    email: `mailto:${site.email}`,
+    telephone: site.phone,
+    address: { '@type': 'PostalAddress', addressLocality: 'Gqeberha', addressCountry: 'ZA' },
+  }
+}
+
+/** JSON-LD for a single artwork/project. */
+export function artworkJsonLd(p: {
+  title: string
+  description: string
+  image: string
+  medium: string
+  year: string
+  slug: string
+}): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VisualArtwork',
+    name: p.title,
+    creator: { '@type': 'Person', name: site.name },
+    artMedium: p.medium,
+    dateCreated: p.year,
+    description: p.description,
+    image: abs(p.image),
+    url: abs(`/projects/${p.slug}`),
+  }
 }
 
 /**

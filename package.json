@@ -3,33 +3,33 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Richard James — South African / UK artist based in Gqeberha, South Africa. Cinematic portfolio (React + Vite + vite-react-ssg).",
+  "description": "Richard James — South African / UK artist based in Gqeberha, South Africa. Cinematic portfolio (Astro + Vite + Tailwind, with React islands).",
   "scripts": {
-    "dev": "vite-react-ssg dev --host",
-    "build": "node scripts/prepare-images.mjs && vite-react-ssg build && node scripts/gen-sitemap.mjs",
-    "preview": "vite preview",
+    "dev": "astro dev",
+    "build": "node scripts/prepare-images.mjs && astro build && node scripts/gen-sitemap.mjs",
+    "preview": "astro preview",
     "test:gestures": "node scripts/test-carousel.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "astro check"
   },
   "dependencies": {
     "gsap": "^3.12.5",
     "lenis": "^1.1.18",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/react": "^6.0.2",
     "@tailwindcss/vite": "^4.0.6",
     "@types/node": "^22.19.20",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
+    "astro": "^7.2.1",
     "sharp": "^0.33.5",
     "svgo": "^3.3.2",
     "tailwindcss": "^4.0.6",
     "typescript": "^5.7.3",
-    "vite": "^6.1.0",
-    "vite-plugin-image-optimizer": "^1.1.8",
-    "vite-react-ssg": "^0.8.7"
+    "vite": "^8.2.1",
+    "vite-plugin-image-optimizer": "^1.1.8"
   }
 }

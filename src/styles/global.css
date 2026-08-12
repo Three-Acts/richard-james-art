@@ -229,3 +229,62 @@ html.lenis body {
     height: 100%;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Progressive enhancement
+ *
+ * Both effects below are gated on [data-js], which the base layout sets on
+ * <html> before first paint. Without JavaScript the rules never apply, so the
+ * page ships fully visible — content stays readable and crawlable, and nothing
+ * can get stranded at opacity 0 if a script fails to load.
+ *
+ * See src/lib/reveal.ts and src/lib/imageFade.ts for the observers that flip
+ * the corresponding attributes.
+ * ------------------------------------------------------------------ */
+
+/* Scroll reveal — replaces the old <Reveal> component. Per-element tuning
+   comes from --reveal-delay / --reveal-y, set inline by Reveal.astro. */
+[data-js] [data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 24px));
+  transition:
+    opacity 0.9s var(--ease-out-expo) var(--reveal-delay, 0s),
+    transform 0.9s var(--ease-out-expo) var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+
+[data-js] [data-reveal][data-reveal-visible] {
+  opacity: 1;
+  transform: translateY(0);
+  will-change: auto;
+}
+
+/* Decode-in fade for static images — replaces the old <Image> component. */
+[data-js] img[data-img-fade] {
+  opacity: 0;
+  transform: scale(1.04);
+  filter: blur(12px);
+  transition:
+    opacity 0.8s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo),
+    filter 0.8s var(--ease-out-expo);
+  will-change: opacity, transform, filter;
+}
+
+[data-js] img[data-img-fade][data-loaded] {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  will-change: auto;
+}
+
+/* Motion is an enhancement, never a gate on seeing the work. */
+@media (prefers-reduced-motion: reduce) {
+  [data-js] [data-reveal],
+  [data-js] img[data-img-fade] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,50 @@
+---
+import Base from '@/layouts/Base.astro'
+import Hero from '@/components/project/Hero.astro'
+import ProjectMeta from '@/components/project/ProjectMeta.astro'
+import Gallery from '@/components/project/Gallery.astro'
+import NextProject from '@/components/project/NextProject.astro'
+import { projects, projectsBySlug } from '@/data/projects'
+import { artworkJsonLd } from '@/lib/structuredData'
+
+/**
+ * Project detail — cinematic, dark, normal Lenis scroll.
+ * Hero → ProjectMeta → Gallery → NextProject.
+ *
+ * One static page per slug, exactly as before; the route table that
+ * vite-react-ssg needed is now just this file plus getStaticPaths.
+ */
+export function getStaticPaths() {
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, index: i + 1 },
+  }))
+}
+
+const { project, index } = Astro.props
+
+const next = projectsBySlug[project.next] ?? projects[0]
+---
+
+<Base
+  title={project.title}
+  description={project.metaDescription}
+  image={project.hero}
+  path={`/projects/${project.slug}`}
+  type="article"
+  jsonLd={artworkJsonLd({
+    title: project.title,
+    description: project.description,
+    image: project.hero,
+    medium: project.medium,
+    year: project.year,
+    slug: project.slug,
+  })}
+>
+  <article>
+    <Hero project={project} index={index} total={projects.length} />
+    <ProjectMeta project={project} />
+    <Gallery project={project} />
+    <NextProject next={next} />
+  </article>
+</Base>

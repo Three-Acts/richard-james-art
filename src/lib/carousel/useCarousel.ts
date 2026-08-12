@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { gsap, Observer, Draggable } from '@/lib/gsap'
+import { gsap, Observer, Draggable } from './gsapPlugins'
 import { WheelClassifier, resolveSnap } from './wheel'
 
 /**
@@ -476,13 +476,24 @@ export function useCarousel(
     stage.addEventListener('click', onClickCapture, true)
     stage.addEventListener('dragstart', onDragStartNative)
 
-    return () => {
+    const teardown = () => {
       gsap.ticker.remove(tick)
       observer.kill()
       draggable.kill()
       killTween()
       stage.removeEventListener('click', onClickCapture, true)
       stage.removeEventListener('dragstart', onDragStartNative)
+    }
+
+    // Astro's ClientRouter replaces the document body without unmounting React,
+    // so this effect's cleanup would never run on a navigation away — leaving
+    // the ticker callback and the Observer alive for the life of the tab. Tear
+    // down on the swap as well; the island re-hydrates fresh on the next page.
+    document.addEventListener('astro:before-swap', teardown, { once: true })
+
+    return () => {
+      document.removeEventListener('astro:before-swap', teardown)
+      teardown()
     }
   }, [animateTo, clampIndex, emit, interruptJump, killTween, lastIndex, options])
 
@@ -518,8 +529,17 @@ export function useCarousel(
       event.preventDefault()
       animateTo(next)
     }
+    const teardown = () => window.removeEventListener('keydown', onKeyDown)
+
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    // See the note above: a ClientRouter swap never unmounts the island, so the
+    // key handler has to be dropped explicitly or it survives the navigation.
+    document.addEventListener('astro:before-swap', teardown, { once: true })
+
+    return () => {
+      document.removeEventListener('astro:before-swap', teardown)
+      teardown()
+    }
   }, [animateTo, lastIndex, options.axis])
 
   return useMemo(

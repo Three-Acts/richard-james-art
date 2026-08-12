@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { gsap } from '@/lib/gsap'
 import type { Project } from '@/types'
 
@@ -86,26 +85,26 @@ export default function TitlePlate({
 
           {/* clip wrapper keeps the masked swap tidy */}
           <h2 className="overflow-hidden">
-            <Link
+            <a
               ref={titleRef}
-              to={`/projects/${project.slug}`}
+              href={`/projects/${project.slug}`}
               className="u-display link-underline inline-block text-[clamp(1.75rem,4.4vw,3.4rem)] leading-[1.02] text-bone"
             >
               {project.title}
-            </Link>
+            </a>
           </h2>
         </div>
 
         {/* CTA — bottom right on desktop, below on mobile */}
         <div className="pointer-events-auto shrink-0 pb-1">
-          <Link
-            to={`/projects/${project.slug}`}
+          <a
+            href={`/projects/${project.slug}`}
             className="btn-line"
             aria-label={`View details of ${project.title}`}
           >
             View Details
             <span aria-hidden="true">→</span>
-          </Link>
+          </a>
         </div>
       </div>
     </div>

@@ -1,0 +1,64 @@
+---
+import { site } from '@/data/site'
+
+export interface Props {
+  /** Page title (the site name is appended automatically). */
+  title?: string
+  description?: string
+  /** Absolute-from-root image path, e.g. "/images/foo/01.avif". */
+  image?: string
+  /** Route path for canonical + og:url, e.g. "/projects/loss". */
+  path?: string
+  /** og:type — "website" | "article" | "profile". */
+  type?: 'website' | 'article' | 'profile'
+  /** Optional JSON-LD structured data object(s). */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
+  noIndex?: boolean
+}
+
+/**
+ * Per-page SEO. Astro renders this straight into <head> at build time, so every
+ * pre-rendered HTML file ships unique, crawlable metadata — the same job the old
+ * <Seo> React component did through react-helmet, with no runtime cost.
+ */
+const {
+  title,
+  description,
+  image,
+  path = '',
+  type = 'website',
+  jsonLd,
+  noIndex,
+} = Astro.props
+
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} | ${site.tagline}`
+// Fall back to the site description when a page passes an empty/undefined one
+// (some works have no blurb) so no page ships a blank meta description.
+const desc = description?.trim() ? description : site.description
+const url = `${site.url}${path}`
+const img = image ? `${site.url}${image}` : `${site.url}/og-default.jpg`
+const blocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={desc} />
+<link rel="canonical" href={url} />
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:site_name" content={site.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={desc} />
+<meta property="og:url" content={url} />
+<meta property="og:image" content={img} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={desc} />
+<meta name="twitter:image" content={img} />
+
+{
+  blocks.map((block) => (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(block)} />
+  ))
+}

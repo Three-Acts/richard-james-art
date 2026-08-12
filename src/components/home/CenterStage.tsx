@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import type { Project } from '@/types'
 import type { CarouselApi } from '@/lib/carousel/useCarousel'
@@ -128,10 +127,10 @@ export default function CenterStage({
         {projects.map((p, i) => {
           const isFirst = i === 0
           return (
-            <Link
+            <a
               key={p.slug}
               ref={setLayer(i)}
-              to={`/projects/${p.slug}`}
+              href={`/projects/${p.slug}`}
               aria-label={`View ${p.title}`}
               tabIndex={i === activeIndex ? 0 : -1}
               draggable={false}
@@ -168,7 +167,7 @@ export default function CenterStage({
               </div>
               {/* focus ring for keyboard users — never on the image itself */}
               <span className="pointer-events-none absolute inset-0 rounded-sm ring-0 ring-gold/0 transition group-focus-visible:ring-1 group-focus-visible:ring-gold/60" />
-            </Link>
+            </a>
           )
         })}
       </div>

@@ -1,6 +1,8 @@
 // Generates dist/sitemap.xml by walking the statically pre-rendered output.
-// vite-react-ssg emits FLAT files (dist/projects/loss.html, dist/about.html),
-// so we map every *.html → its clean URL.
+// astro.config.mjs sets build.format:'file', so Astro emits FLAT files
+// (dist/projects/loss.html, dist/about.html) — we map every *.html → its clean
+// URL. Switching that back to the default 'directory' format would need the
+// /index stripping below to become the main path, not a fallback.
 import { readdir, writeFile } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 

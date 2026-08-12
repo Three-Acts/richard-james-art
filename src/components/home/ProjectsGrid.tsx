@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { projects, years } from '@/data/projects'
 import type { Project } from '@/types'
 import Image from '@/components/ui/Image'
 import Reveal from '@/components/ui/Reveal'
-import { getLenis } from '@/lib/useLenis'
+import { getLenis } from '@/lib/lenis'
 import YearFilter from './YearFilter'
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
@@ -14,8 +13,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       delay={Math.min(index % 6, 5) * 0.06}
       className="group"
     >
-      <Link
-        to={`/projects/${project.slug}`}
+      <a
+        href={`/projects/${project.slug}`}
         className="block focus-visible:outline-none"
         aria-label={`${project.title}, ${project.year}`}
       >
@@ -43,7 +42,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             {project.year}
           </span>
         </div>
-      </Link>
+      </a>
     </Reveal>
   )
 }

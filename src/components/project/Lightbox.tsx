@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import type { GalleryImage } from '@/types'
-import { getLenis } from '@/lib/useLenis'
+import { getLenis } from '@/lib/lenis'
 import { useCarousel } from '@/lib/carousel/useCarousel'
 
 interface LightboxProps {

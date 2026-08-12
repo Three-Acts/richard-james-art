@@ -1,8 +1,8 @@
 import { memo, useEffect, useRef, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 import Image from '@/components/ui/Image'
 import { projects, years } from '@/data/projects'
-import { getLenis } from '@/lib/useLenis'
+import { getLenis } from '@/lib/lenis'
+import { initScrollSync } from '@/lib/scrollSync'
 import { useCarousel } from '@/lib/carousel/useCarousel'
 import CenterStage from './CenterStage'
 import ProjectsGrid from './ProjectsGrid'
@@ -64,6 +64,12 @@ export default function HomeExperience() {
   // persistent year rail. Default lights the newest year for SSR / first paint.
   const [nav, setNav] = useState<HomeNav>({ activeIndex: 0, goToIndex: () => {} })
   const fadeTimer = useRef<number | undefined>(undefined)
+
+  // The stage runs on the GSAP ticker, so put Lenis on the same frame — the
+  // shell leaves it on a standalone RAF for the pages that never load GSAP.
+  useEffect(() => {
+    initScrollSync()
+  }, [])
 
   // SSR always ships the slideshow; restore the visitor's choice only after
   // mount (without a fade) so hydration stays consistent.
@@ -368,8 +374,8 @@ function MobileHome({
     >
       {/* Hero — fills the space left over, whole artwork visible, tappable. */}
       <div className="relative min-h-0 flex-1 px-[var(--gutter)] pt-3">
-        <Link
-          to={`/projects/${active.slug}`}
+        <a
+          href={`/projects/${active.slug}`}
           aria-label={`View ${active.title}`}
           className="block h-full"
         >
@@ -380,7 +386,7 @@ function MobileHome({
             sizes="100vw"
             className="h-full w-full [&>img]:!object-contain"
           />
-        </Link>
+        </a>
       </div>
 
       {/* Title + counter (no CTA — the artwork above is the link). */}
@@ -393,12 +399,12 @@ function MobileHome({
           <span aria-hidden="true" className="h-px w-8 bg-line" />
         </div>
         <h2 className="overflow-hidden">
-          <Link
-            to={`/projects/${active.slug}`}
+          <a
+            href={`/projects/${active.slug}`}
             className="u-display link-underline inline-block text-[clamp(1.5rem,6.5vw,2.2rem)] leading-[1.04] text-bone"
           >
             {active.title}
-          </Link>
+          </a>
         </h2>
       </div>
 

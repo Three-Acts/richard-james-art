@@ -2,6 +2,7 @@
 import Base from '@/layouts/Base.astro'
 import Reveal from '@/components/ui/Reveal.astro'
 import { site } from '@/data/site'
+import { personJsonLd } from '@/lib/structuredData'
 
 /**
  * Contact — an editorial two-column spread rather than a centred stack: the
@@ -17,7 +18,12 @@ const rows = [
 ]
 ---
 
-<Base title="Contact" path="/contact">
+<Base
+  title="Contact"
+  description={`Contact ${site.name} — and exhibition enquiries. Based in ${site.location}.`}
+  path="/contact"
+  jsonLd={personJsonLd()}
+>
   <section class="u-container flex min-h-[calc(100vh-var(--nav-h))] items-center py-32">
     <div
       class="grid w-full grid-cols-1 gap-x-[clamp(4rem,8vw,8rem)] gap-y-16 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]"

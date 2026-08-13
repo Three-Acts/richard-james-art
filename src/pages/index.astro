@@ -14,13 +14,11 @@ import { collectionJsonLd, personJsonLd, websiteJsonLd } from '@/lib/structuredD
  * project link — so search engines and no-JS visitors get all the works even
  * though the mechanic never runs for them.
  */
-const first = projects[0]
 ---
 
 <Base
   path="/"
   description={site.description}
-  image={first.hero}
   type="website"
   jsonLd={[websiteJsonLd(), personJsonLd(), collectionJsonLd()]}
   transparentNav

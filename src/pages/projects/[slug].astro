@@ -5,7 +5,7 @@ import ProjectMeta from '@/components/project/ProjectMeta.astro'
 import Gallery from '@/components/project/Gallery.astro'
 import NextProject from '@/components/project/NextProject.astro'
 import { projects, projectsBySlug } from '@/data/projects'
-import { artworkJsonLd } from '@/lib/structuredData'
+import { artworkJsonLd, breadcrumbJsonLd } from '@/lib/structuredData'
 
 /**
  * Project detail — cinematic, dark, normal Lenis scroll.
@@ -29,17 +29,22 @@ const next = projectsBySlug[project.next] ?? projects[0]
 <Base
   title={project.title}
   description={project.metaDescription}
-  image={project.hero}
   path={`/projects/${project.slug}`}
   type="article"
-  jsonLd={artworkJsonLd({
-    title: project.title,
-    description: project.description,
-    image: project.hero,
-    medium: project.medium,
-    year: project.year,
-    slug: project.slug,
-  })}
+  jsonLd={[
+    artworkJsonLd({
+      title: project.title,
+      description: project.description,
+      image: project.hero,
+      medium: project.medium,
+      year: project.year,
+      slug: project.slug,
+    }),
+    breadcrumbJsonLd([
+      { name: 'Home', path: '/' },
+      { name: project.title, path: `/projects/${project.slug}` },
+    ]),
+  ]}
 >
   <article>
     <Hero project={project} index={index} total={projects.length} />

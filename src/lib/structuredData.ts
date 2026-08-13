@@ -57,6 +57,27 @@ export function artworkJsonLd(p: {
   }
 }
 
+/** Article node for long-form writing (the essay page). */
+export function articleJsonLd(a: {
+  headline: string
+  description: string
+  path: string
+  keywords?: string[]
+}): JsonLd {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: a.headline,
+    description: a.description,
+    url: abs(a.path),
+    mainEntityOfPage: abs(a.path),
+    inLanguage: 'en',
+    author: { '@type': 'Person', name: site.name, url: site.url },
+    publisher: { '@type': 'Person', name: site.name, url: site.url },
+    ...(a.keywords ? { keywords: a.keywords.join(', ') } : {}),
+  }
+}
+
 /**
  * Site-level WebSite node. Identifies the canonical origin and publisher.
  */

@@ -2,6 +2,11 @@
 import Base from '@/layouts/Base.astro'
 import Reveal from '@/components/ui/Reveal.astro'
 import { essayBlocks } from '@/data/pages'
+import { articleJsonLd } from '@/lib/structuredData'
+
+const essayTitle = 'The Unborn Rags of the Mind'
+const essayDescription =
+  'An essay by Richard James on the Buddhist kesa, affect theory and the Unborn — placing the 2,500-year-old robe of discarded rags alongside Massumi and Laplanche to open psychotherapy beyond pathology.'
 
 /**
  * Long-form reading layout for the essay "The Unborn Rags of the Mind".
@@ -14,7 +19,18 @@ import { essayBlocks } from '@/data/pages'
 const firstParagraph = essayBlocks.findIndex((b) => b.tag === 'p')
 ---
 
-<Base title="Essay — The Unborn Rags of the Mind" path="/essay" type="article">
+<Base
+  title={essayTitle}
+  description={essayDescription}
+  path="/essay"
+  type="article"
+  jsonLd={articleJsonLd({
+    headline: essayTitle,
+    description: essayDescription,
+    path: '/essay',
+    keywords: ['Kesa', 'Unborn', 'affect', 'Buddhism', 'psychotherapy'],
+  })}
+>
   <article class="u-container pb-32 pt-[calc(var(--nav-h)+clamp(4rem,12vw,9rem))]">
     {
       essayBlocks.map((block, i) => {

@@ -26,9 +26,9 @@ const HEIGHT = 630
 // Candidate hero sources, in preference order. The first that exists wins,
 // so the script stays resilient if a single project is ever renamed.
 const SOURCE_CANDIDATES = [
-  'public/images/ghosts-become-ancestors/01.avif',
-  'public/images/remember/01.avif',
-  'public/images/straightforward/01.avif',
+  'public/images/projects/ghosts-become-ancestors/ghosts-become-ancestors-01.avif',
+  'public/images/projects/remember/remember-01.avif',
+  'public/images/projects/straight-forward/straight-forward-01.avif',
 ]
 
 const OUTPUT = resolve(ROOT, 'public/og-default.jpg')

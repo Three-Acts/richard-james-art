@@ -20,11 +20,11 @@ export const projects: Project[] = [
   },
   {
     slug: "circle-and-head",
-    title: "Circle and Head",
+    title: "Burning in Love",
     year: "2026",
-    medium: "",
-    description: "",
-    metaDescription: "",
+    medium: "Circle: plastic, 90cm\nHead: resin, charcoal and burnt chair\nUnderneath the plastic circle is a mounted text, a secret",
+    description: "Letting this body burn and noticing what cannot be captured; cannot be policed or controlled.\n\nLike falling in love over and over again… burning, and falling in love…",
+    metaDescription: "Burning in Love, a 2026 work by Richard James — a plastic circle and a head of resin, charcoal and burnt chair, with a secret text mounted beneath.",
     hero: "/images/projects/circle-and-head/circle-and-head-01.avif",
     thumb: "/images/projects/circle-and-head/circle-and-head-01.avif",
     images: ["/images/projects/circle-and-head/circle-and-head-01.avif","/images/projects/circle-and-head/circle-and-head-02.avif","/images/projects/circle-and-head/circle-and-head-03.avif","/images/projects/circle-and-head/circle-and-head-04.avif","/images/projects/circle-and-head/circle-and-head-05.avif"],
@@ -455,17 +455,19 @@ export const projects: Project[] = [
   },
   {
     slug: "black-photos-1995",
-    title: "Black Photos",
+    title: "Black Photos and Poems",
     year: "1995",
-    medium: "",
-    description: "",
-    metaDescription: "",
+    medium: "Photos 96/96cm mounted on aluminium; text 32/32cm etched traffolyte",
+    description: "A series of work attempting to express a sense of more than this ‘locked in reactive body,’ and at the same time staying true to mundane reality i.e. not transcendence away from this body, but more of a descending into the body. Immanence. My awareness of this at the time might be described as more or less disturbed peace. And of course less disturbed was appreciated!\n\nThe black photos came from a wall I was meditating in front of, which is the approach in Soto Zen. The poems arose from an enjoyment of concrete poetry, and were a further attempt to bring transcendence back down to earth: to the body.\n\nThere was also another layer of ambiguity: a black wall, and ending, a difficult urban landscape.\n\nA willingness to not turn away from this.",
+    metaDescription: "Black Photos and Poems, a 1995 series by Richard James — photographs of a meditation wall with concrete poems, bringing transcendence back to the body.",
     hero: "/images/projects/black-photos-1995/black-photos-1995-01.avif",
     thumb: "/images/projects/black-photos-1995/black-photos-1995-01.avif",
-    images: ["/images/projects/black-photos-1995/black-photos-1995-01.avif","/images/projects/black-photos-1995/black-photos-1995-02.avif","/images/projects/black-photos-1995/black-photos-1995-03.avif","/images/projects/black-photos-1995/black-photos-1995-04.avif","/images/projects/black-photos-1995/black-photos-1995-05.avif","/images/projects/black-photos-1995/black-photos-1995-06.avif","/images/projects/black-photos-1995/black-photos-1995-07.avif","/images/projects/black-photos-1995/black-photos-1995-08.avif","/images/projects/black-photos-1995/black-photos-1995-09.avif","/images/projects/black-photos-1995/black-photos-1995-10.avif","/images/projects/black-photos-1995/black-photos-1995-11.avif","/images/projects/black-photos-1995/black-photos-1995-12.avif","/images/projects/black-photos-1995/black-photos-1995-13.avif","/images/projects/black-photos-1995/black-photos-1995-14.avif","/images/projects/black-photos-1995/black-photos-1995-15.avif","/images/projects/black-photos-1995/black-photos-1995-16.avif","/images/projects/black-photos-1995/black-photos-1995-17.avif","/images/projects/black-photos-1995/black-photos-1995-18.avif","/images/projects/black-photos-1995/black-photos-1995-19.avif","/images/projects/black-photos-1995/black-photos-1995-20.avif","/images/projects/black-photos-1995/black-photos-1995-21.avif"],
-    // Each work is documented in a run of three frames, so the grid shows the
-    // first of each (01, 04, 07, …) and the viewer still carries all 21.
-    gridStride: 3,
+    // Each work is documented in a run of three frames (full composition,
+    // the two photos enlarged, the two texts enlarged). The scroll shows the
+    // series in three passes — all 7 compositions, then the 7 photo pairs
+    // bigger on screen, then the 7 poems — so the sequence below groups the
+    // frames by pass, not by filename number.
+    images: ["/images/projects/black-photos-1995/black-photos-1995-01.avif","/images/projects/black-photos-1995/black-photos-1995-04.avif","/images/projects/black-photos-1995/black-photos-1995-07.avif","/images/projects/black-photos-1995/black-photos-1995-10.avif","/images/projects/black-photos-1995/black-photos-1995-13.avif","/images/projects/black-photos-1995/black-photos-1995-16.avif","/images/projects/black-photos-1995/black-photos-1995-19.avif","/images/projects/black-photos-1995/black-photos-1995-02.avif","/images/projects/black-photos-1995/black-photos-1995-05.avif","/images/projects/black-photos-1995/black-photos-1995-08.avif","/images/projects/black-photos-1995/black-photos-1995-11.avif","/images/projects/black-photos-1995/black-photos-1995-14.avif","/images/projects/black-photos-1995/black-photos-1995-17.avif","/images/projects/black-photos-1995/black-photos-1995-20.avif","/images/projects/black-photos-1995/black-photos-1995-03.avif","/images/projects/black-photos-1995/black-photos-1995-06.avif","/images/projects/black-photos-1995/black-photos-1995-09.avif","/images/projects/black-photos-1995/black-photos-1995-12.avif","/images/projects/black-photos-1995/black-photos-1995-15.avif","/images/projects/black-photos-1995/black-photos-1995-18.avif","/images/projects/black-photos-1995/black-photos-1995-21.avif"],
     next: "names-and-words-1994",
   },
   {

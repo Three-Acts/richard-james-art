@@ -62,7 +62,7 @@ export default function HomeExperience() {
   const [fading, setFading] = useState(false)
   // The active work + navigator of whichever display is on screen, feeding the
   // persistent year rail. Default lights the newest year for SSR / first paint.
-  const [nav, setNav] = useState<HomeNav>({ activeIndex: 0, goToIndex: () => {} })
+  const [nav, setNav] = useState<HomeNav>({ activeIndex: 0, goToIndex: () => { } })
   const fadeTimer = useRef<number | undefined>(undefined)
 
   // The stage runs on the GSAP ticker, so put Lenis on the same frame — the
@@ -172,25 +172,14 @@ function GridIcon() {
   )
 }
 
-function ViewToggle({
-  view,
-  onViewChange,
-  className = '',
-}: {
-  view: HomeView
-  onViewChange: (view: HomeView) => void
-  className?: string
-}) {
+function ViewToggle({ view, onViewChange, className = '' }: { view: HomeView, onViewChange: (view: HomeView) => void, className?: string }) {
   const options: { value: HomeView; label: string; icon: ReactNode }[] = [
     { value: 'stage', label: 'Slideshow view', icon: <SlideshowIcon /> },
     { value: 'grid', label: 'Grid view', icon: <GridIcon /> },
   ]
+
   return (
-    <div
-      role="group"
-      aria-label="Display works as"
-      className={`pointer-events-auto inline-flex items-center gap-1 rounded-full border border-line-soft bg-ink/70 p-1 shadow-[0_8px_30px_rgba(0,0,0,0.45)] backdrop-blur-md ${className}`}
-    >
+    <div role="group" aria-label="Display works as" className={`pointer-events-auto inline-flex items-center gap-1 ${className}`} >
       {options.map((o) => {
         const isActive = view === o.value
         return (

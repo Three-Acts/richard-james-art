@@ -8,9 +8,6 @@ import { personJsonLd } from '@/lib/structuredData'
 // Portrait of the artist (the original site's About photo).
 const portrait = '/images/about/richard-james.avif'
 
-// Pull the closing two lines out as a gold "pulled quote" to break the column.
-const body = aboutBlocks.slice(0, aboutBlocks.length - 2)
-const pulled = aboutBlocks.slice(aboutBlocks.length - 2)
 ---
 
 <Base title="About" path="/about" type="profile" jsonLd={personJsonLd()}>
@@ -33,10 +30,8 @@ const pulled = aboutBlocks.slice(aboutBlocks.length - 2)
       {/* Prose column */}
       <div class="max-w-[42rem]">
         {
-          body.map((block, i) => (
-            <Reveal
-              as="p"
-              class:list={[
+          aboutBlocks.map((block, i) => (
+            <Reveal as="p" class:list={[
                 'mt-6 text-[1.02rem] leading-[1.85] text-bone-dim [text-wrap:pretty] first:mt-0',
                 i === 0 &&
                   'first-letter:float-left first-letter:mr-3 first-letter:mt-2 first-letter:font-display first-letter:text-[3.4rem] first-letter:leading-[0.72] first-letter:text-gold',
@@ -46,17 +41,6 @@ const pulled = aboutBlocks.slice(aboutBlocks.length - 2)
             </Reveal>
           ))
         }
-
-        {/* Gold pulled accent line */}
-        <Reveal class="mt-14 border-l border-gold/50 pl-7">
-          {
-            pulled.map((block) => (
-              <p class="font-display text-[1.3rem] leading-[1.45] tracking-[0.01em] text-gold-bright [text-wrap:balance] [&:not(:first-child)]:mt-3">
-                {block.text}
-              </p>
-            ))
-          }
-        </Reveal>
       </div>
 
       {/* Tall accent artwork */}

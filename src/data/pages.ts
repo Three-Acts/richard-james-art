@@ -8,9 +8,9 @@ export const aboutBlocks: ContentBlock[] = [
   { tag: "p", text: "As John Keats wrote, a negative capability is necessary: the ability to resist explaining away what we do not understand." },
   { tag: "p", text: "It will be felt as an affect—played out pre-cognitively on the skin and in the heart—only later, perhaps, to be known and held gently as compassionate wisdom." },
   { tag: "p", text: "Laplanche, and ultimately Buddhist practice, encourage us to turn this sense into a creative act: to perceive it non-cognitively and to follow it. The artist, the meditator, is not the prime mover." },
-  { tag: "p", text: "In this work, there is an attempt to follow the affect: an opening, a doorway, an invitation. A willingness to sit with suffering and vulnerability, and its inherent invitation to closeness." },
-  { tag: "p", text: "There is, at times, a surge and upwelling of power in the body." },
-  { tag: "p", text: "I can only bow." },
+  { tag: "p", text: "In my work, there is an attempt to follow the affect: an opening, a doorway, an invitation. A willingness to sit with suffering and vulnerability, and its inherent invitation to closeness." },
+  // { tag: "p", text: "There is, at times, a surge and upwelling of power in the body." },
+  // { tag: "p", text: "I can only bow." },
 ]
 
 export const essayBlocks: ContentBlock[] = [

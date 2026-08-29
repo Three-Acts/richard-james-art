@@ -26,32 +26,29 @@ const paragraphs = project.description
 <section class="u-container py-[clamp(4rem,12vh,9rem)]">
   {/* Meta rule */}
   <Reveal>
-    <dl class="grid gap-6 md:gap-8 lg:gap-10 max-w-3xl mx-auto">
-      <div class="grid gap-3 grid-cols-[minmax(0,10rem)_1fr]">
-        <dt class="u-eyebrow">Year</dt>
-        <dd class="text-bone">
-          {project.year}
-        </dd>
-      </div>
-      <div class="grid gap-3 grid-cols-[minmax(0,10rem)_1fr]">
-        <dt class="u-eyebrow">Medium / Dimensions</dt>
-        <dd class="whitespace-pre-line text-bone">
-          {project.medium}
-        </dd>
-      </div>
+    <dl class="grid gap-6 md:gap-8 lg:gap-10 max-w-3xl">
+      <dd class="text-bone">
+        {project.year}
+      </dd>
+      <dd class="whitespace-pre-line text-bone">
+        {project.medium}
+      </dd>
 
       {/* Slide text + essay link */}
       {
         hasText && (
-          <div class="grid gap-3 grid-cols-[minmax(0,10rem)_1fr]">
-            <dt class="u-eyebrow">Writing</dt>
-            <dd class="space-y-4 text-bone">
-              {paragraphs.map((paragraph) => (<p>{paragraph}</p>))}
-                <a href="/essay" class="block underline underline-offset-8 hover:text-gold-bright" aria-label="Read the essay">
-                  Read Essay
-                </a>
-            </dd>
-          </div>
+          <dd class="space-y-4 text-bone">
+            {paragraphs.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+            <a
+              href="/essay"
+              class="block underline underline-offset-8 hover:text-gold-bright"
+              aria-label="Read the essay"
+            >
+              Read Essay
+            </a>
+          </dd>
         )
       }
     </dl>

@@ -6,6 +6,7 @@ dist-ssr
 *.local
 .DS_Store
 .env*
+.local
 .playwright-mcp
 
 # Recon source-of-truth (kept locally, not shipped)

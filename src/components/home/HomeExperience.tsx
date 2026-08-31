@@ -1,12 +1,12 @@
-import { memo, useEffect, useRef, useState, type ReactNode } from 'react'
+import { memo, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import Image from '@/components/ui/Image'
 import { projects, years } from '@/data/projects'
 import { getLenis } from '@/lib/lenis'
 import {
+  recallGridScroll,
   recallStageIndex,
   rememberGridScroll,
   rememberStageIndex,
-  takeGridScroll,
 } from '@/lib/homeMemory'
 import { initScrollSync } from '@/lib/scrollSync'
 import { useCarousel } from '@/lib/carousel/useCarousel'
@@ -77,11 +77,23 @@ export default function HomeExperience() {
     initScrollSync()
   }, [])
 
+  // The grid offset to restore for THIS page visit, recalled once at mount —
+  // it is set only when this visit is a traversal back to an entry that had
+  // scrolled the grid (see lib/homeMemory.ts). One-shot: the grid consumes it
+  // on its first mount, so a later view toggle starts at the top as designed.
+  const pendingGridScroll = useRef(0)
+  const takeGridRestore = useCallback(() => {
+    const y = pendingGridScroll.current
+    pendingGridScroll.current = 0
+    return y
+  }, [])
+
   // SSR always ships the slideshow; restore the visitor's choice only after
   // mount (without a fade) so hydration stays consistent.
   useEffect(() => {
     try {
       if (window.sessionStorage.getItem(VIEW_KEY) === 'grid') {
+        pendingGridScroll.current = recallGridScroll()
         setView('grid')
         setShown('grid')
       }
@@ -131,7 +143,7 @@ export default function HomeExperience() {
         }}
       >
         {shown === 'grid' ? (
-          <GridHome onNav={setNav} />
+          <GridHome onNav={setNav} takeRestoreScroll={takeGridRestore} />
         ) : (
           <StageHome onNav={setNav} />
         )}
@@ -235,23 +247,26 @@ function MobileViewToggle({
  *  the grid; it reports its active work + navigator up via onNav. */
 const GridHome = memo(function GridHome({
   onNav,
+  takeRestoreScroll,
 }: {
   onNav: (nav: HomeNav) => void
+  /** One-shot per page visit: the offset to put the grid back to, or 0. */
+  takeRestoreScroll: () => number
 }) {
-  // Put a returning visitor straight back where they were in the grid.
+  // Put a visitor traversing back straight to where they were in the grid.
   // ClientRouter's own history restore runs against the pre-hydration markup —
   // the SSR'd stage, one viewport tall — so by the time the grid is actually
   // on screen the native attempt has already clamped to 0; the grid re-applies
   // the offset itself once it has real height (card heights are reserved via
   // aspect-ratio, so the offset is exact before any image loads).
   useEffect(() => {
-    const y = takeGridScroll()
+    const y = takeRestoreScroll()
     if (!y) return
     window.scrollTo(0, y)
     // Lenis keeps its own animated position; snap it to match or it glides
     // the page back to where it thinks it was.
     getLenis()?.scrollTo(y, { immediate: true, force: true })
-  }, [])
+  }, [takeRestoreScroll])
 
   // Capture where the grid is the moment a navigation away begins.
   useEffect(() => {
@@ -286,10 +301,11 @@ const StageHome = memo(function StageHome({
   const [mobileIndex, setMobileIndex] = useState(0)
   const mobileActive = projects[mobileIndex] ?? projects[0]
 
-  // A returning visitor resumes at the work they left (browser back after
-  // viewing a piece, or any route back to home within the session) instead of
-  // resetting to the first. Declared BEFORE the remember effects below so the
-  // recall reads the stored index ahead of their initial (index 0) write.
+  // A visitor traversing back to this home entry (browser back after viewing
+  // a piece) resumes at the work they left; a fresh navigation to home recalls
+  // nothing and starts at the first work (see lib/homeMemory.ts). Declared
+  // BEFORE the remember effects below so the recall reads the stored index
+  // ahead of their initial (index 0) write.
   useEffect(() => {
     const saved = Math.min(recallStageIndex(), N - 1)
     if (saved > 0) {

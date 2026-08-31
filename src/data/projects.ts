@@ -504,6 +504,15 @@ export const projectsBySlug: Record<string, Project> = Object.fromEntries(
   projects.map((p) => [p.slug, p]),
 )
 
+/**
+ * The previous work in the browsing order: the project whose `next` points at
+ * this slug. The `next` chain is a single wrapping cycle over all works, so
+ * every project has exactly one predecessor.
+ */
+export const previousBySlug: Record<string, Project> = Object.fromEntries(
+  projects.map((p) => [p.next, p]),
+)
+
 /** Normalise a single gallery entry (bare path or object) to a GalleryImage. */
 export function toGalleryImage(entry: GalleryEntry): GalleryImage {
   return typeof entry === "string" ? { src: entry } : entry

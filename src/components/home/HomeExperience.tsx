@@ -2,6 +2,12 @@ import { memo, useEffect, useRef, useState, type ReactNode } from 'react'
 import Image from '@/components/ui/Image'
 import { projects, years } from '@/data/projects'
 import { getLenis } from '@/lib/lenis'
+import {
+  recallStageIndex,
+  rememberGridScroll,
+  rememberStageIndex,
+  takeGridScroll,
+} from '@/lib/homeMemory'
 import { initScrollSync } from '@/lib/scrollSync'
 import { useCarousel } from '@/lib/carousel/useCarousel'
 import CenterStage from './CenterStage'
@@ -232,6 +238,28 @@ const GridHome = memo(function GridHome({
 }: {
   onNav: (nav: HomeNav) => void
 }) {
+  // Put a returning visitor straight back where they were in the grid.
+  // ClientRouter's own history restore runs against the pre-hydration markup —
+  // the SSR'd stage, one viewport tall — so by the time the grid is actually
+  // on screen the native attempt has already clamped to 0; the grid re-applies
+  // the offset itself once it has real height (card heights are reserved via
+  // aspect-ratio, so the offset is exact before any image loads).
+  useEffect(() => {
+    const y = takeGridScroll()
+    if (!y) return
+    window.scrollTo(0, y)
+    // Lenis keeps its own animated position; snap it to match or it glides
+    // the page back to where it thinks it was.
+    getLenis()?.scrollTo(y, { immediate: true, force: true })
+  }, [])
+
+  // Capture where the grid is the moment a navigation away begins.
+  useEffect(() => {
+    const save = () => rememberGridScroll(window.scrollY)
+    document.addEventListener('astro:before-preparation', save)
+    return () => document.removeEventListener('astro:before-preparation', save)
+  }, [])
+
   return (
     <div style={{ paddingTop: 'var(--nav-h)' }}>
       <ProjectsGrid onNav={onNav} />
@@ -257,6 +285,37 @@ const StageHome = memo(function StageHome({
   // Mobile gets its own active index (IO-driven), independent of scroll trigger.
   const [mobileIndex, setMobileIndex] = useState(0)
   const mobileActive = projects[mobileIndex] ?? projects[0]
+
+  // A returning visitor resumes at the work they left (browser back after
+  // viewing a piece, or any route back to home within the session) instead of
+  // resetting to the first. Declared BEFORE the remember effects below so the
+  // recall reads the stored index ahead of their initial (index 0) write.
+  useEffect(() => {
+    const saved = Math.min(recallStageIndex(), N - 1)
+    if (saved > 0) {
+      api.goToIndex(saved, { immediate: true })
+      setMobileIndex(saved)
+    }
+    // Mount-only: recalling again mid-session would fight the visitor.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Whichever stage is live (desktop carousel or mobile strip) keeps the
+  // session's place current; the dormant one's index never changes after the
+  // recall above, so the two writers don't fight. The mount run is skipped —
+  // it would write the pre-recall index 0 over the remembered one (and when
+  // the stored view is the grid, this stage mounts only transiently and
+  // unmounts before the recalled index could write itself back).
+  const rememberArmed = useRef(false)
+  useEffect(() => {
+    if (rememberArmed.current) rememberStageIndex(activeIndex)
+  }, [activeIndex])
+  useEffect(() => {
+    if (rememberArmed.current) rememberStageIndex(mobileIndex)
+  }, [mobileIndex])
+  useEffect(() => {
+    rememberArmed.current = true
+  }, [])
 
   // Feed the persistent year rail: the desktop stage owns the rail's active
   // year + jump target (the rail is hidden on mobile).

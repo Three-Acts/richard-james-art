@@ -97,7 +97,7 @@ export const projects: Project[] = [
     slug: "loss",
     title: "Loss",
     year: "2025",
-    medium: "Discarded bedding, 50/41cm",
+    medium: "Discarded T-shirt, 50/41cm",
     description: "",
     metaDescription: "",
     hero: "/images/projects/loss/01.avif",

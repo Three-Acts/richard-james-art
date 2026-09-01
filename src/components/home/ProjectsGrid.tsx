@@ -64,7 +64,11 @@ export default function ProjectsGrid({
   onNav,
 }: {
   /** Report the active work + navigator up to the persistent year rail. */
-  onNav?: (nav: { activeIndex: number; goToIndex: (i: number) => void }) => void
+  onNav?: (nav: {
+    activeIndex: number
+    goToIndex: (i: number) => void
+    reset?: () => void
+  }) => void
 }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const itemRefs = useRef<(HTMLLIElement | null)[]>([])
@@ -154,11 +158,20 @@ export default function ProjectsGrid({
     else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + offset, behavior: 'smooth' })
   }, [])
 
+  // The Home-link-while-on-home gesture: glide the grid back to the very top.
+  // The scroll spy re-lights the years on the way up, so no state to touch.
+  const reset = useCallback(() => {
+    holdRef.current = false
+    const lenis = getLenis()
+    if (lenis) lenis.scrollTo(0)
+    else window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   // Feed the persistent (outside-the-fade) year rail — the lit year tracks the
   // scroll spy, and clicking a year jumps the grid.
   useEffect(() => {
-    onNav?.({ activeIndex, goToIndex })
-  }, [activeIndex, goToIndex, onNav])
+    onNav?.({ activeIndex, goToIndex, reset })
+  }, [activeIndex, goToIndex, onNav, reset])
 
   return (
     <section

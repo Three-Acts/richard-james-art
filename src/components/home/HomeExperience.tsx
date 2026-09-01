@@ -58,6 +58,8 @@ const FADE_MS = 300
 export interface HomeNav {
   activeIndex: number
   goToIndex: (index: number) => void
+  /** Return this display to its start — first work / top of grid, animated. */
+  reset?: () => void
 }
 
 export default function HomeExperience() {
@@ -75,6 +77,38 @@ export default function HomeExperience() {
   // shell leaves it on a standalone RAF for the pages that never load GSAP.
   useEffect(() => {
     initScrollSync()
+  }, [])
+
+  // Clicking a Home link (nav item, logo, menu) while ALREADY on the homepage
+  // resets the on-screen display in place — carousel back to the first work,
+  // grid back to the top — instead of running a full ClientRouter navigation.
+  // Capture phase, so the preventDefault lands before the router's bubble-phase
+  // click handler (which skips defaultPrevented events). Modified clicks and
+  // non-"/" links pass through untouched.
+  const navRef = useRef(nav)
+  navRef.current = nav
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const anchor = (event.target as HTMLElement | null)?.closest?.('a[href]')
+      if (!(anchor instanceof HTMLAnchorElement)) return
+      if ((anchor.target && anchor.target !== '_self') || anchor.hasAttribute('download')) return
+      const url = new URL(anchor.href, location.href)
+      if (url.origin !== location.origin || url.pathname !== '/' || url.hash) return
+      event.preventDefault()
+      navRef.current.reset?.()
+    }
+    document.addEventListener('click', onClick, true)
+    // A ClientRouter swap never unmounts the island, so drop the listener on
+    // the swap too — left alive it would swallow real Home navigations from
+    // the next page.
+    const teardown = () => document.removeEventListener('click', onClick, true)
+    document.addEventListener('astro:before-swap', teardown, { once: true })
+    return () => {
+      document.removeEventListener('astro:before-swap', teardown)
+      teardown()
+    }
   }, [])
 
   // The grid offset to restore for THIS page visit, recalled once at mount —
@@ -334,9 +368,17 @@ const StageHome = memo(function StageHome({
   }, [])
 
   // Feed the persistent year rail: the desktop stage owns the rail's active
-  // year + jump target (the rail is hidden on mobile).
+  // year + jump target (the rail is hidden on mobile). reset serves the
+  // Home-link-while-on-home gesture — glide both stages back to the first work.
   useEffect(() => {
-    onNav({ activeIndex, goToIndex: api.goToIndex })
+    onNav({
+      activeIndex,
+      goToIndex: api.goToIndex,
+      reset: () => {
+        api.goToIndex(0)
+        setMobileIndex(0)
+      },
+    })
   }, [activeIndex, api.goToIndex, onNav])
 
   return (

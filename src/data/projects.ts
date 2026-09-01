@@ -205,7 +205,7 @@ export const projects: Project[] = [
     slug: "leaving-home",
     title: "Leaving Home",
     year: "2024",
-    medium: "Fabric, burnt Japanese cedar, brass, human hair\nmonk's kesa (meditation robe) 215cm/130cm\nWood 245cm/34cm",
+    medium: "Fabric/monk's kesa (meditation robe), burnt Japanese cedar, brass, human hair 215cm/130cm Wood 245cm/34cm",
     description: "To leave home, to become an outcast, a wanderer, to be homeless. The nun cuts her hair and recites a verse “…after all neither birth nor death exist.” And no amount of thinking will resolve the question, why?It’s as if your home is burning and your tears become an ocean. One drop of the ocean is enough to forget the pain and remember you never left home.And we keep going.",
     metaDescription: "To leave home, to become an outcast, a wanderer, to be homeless. The nun cuts her hair and recites a verse “…after all neither birth nor death exist.” And ",
     hero: "/images/projects/leaving-home/leaving-home-01.avif",
